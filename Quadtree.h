@@ -6,11 +6,12 @@ struct Quadtree {
   // Space is divided into quadrants when more than N lines are 
   // in the quadrant. 
   // Either all quadrants point to NULL or all point to valid
-  // addresses. 
-  Quadtree quadrant_1;
-  Quadtree quadrant_2;
-  Quadtree quadrant_3;
-  Quadtree quadrant_4;
+  // addresses.
+  // Quadrants are owned by this Quadtree
+  Quadtree * quadrant_1;
+  Quadtree * quadrant_2;
+  Quadtree * quadrant_3;
+  Quadtree * quadrant_4;
   
   // Does not own the lines.
   // Pointer to pointer of lines in this node.
