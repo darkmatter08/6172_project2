@@ -127,6 +127,7 @@ void CollisionWorld_lineWallCollision(CollisionWorld* collisionWorld) {
 void CollisionWorld_detectIntersection(CollisionWorld* collisionWorld) {
   IntersectionEventList intersectionEventList = IntersectionEventList_make();
 
+  // Replace as part of basic QuadTree
   // Test all line-line pairs to see if they will intersect before the
   // next time step.
   for (int i = 0; i < collisionWorld->numOfLines; i++) {
@@ -153,6 +154,7 @@ void CollisionWorld_detectIntersection(CollisionWorld* collisionWorld) {
     }
   }
 
+  // Does this need to be changed as part of the basic QuadTree implementation?
   // Sort the intersection event list.
   IntersectionEventNode* startNode = intersectionEventList.head;
   while (startNode != NULL) {
