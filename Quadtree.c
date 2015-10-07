@@ -1,5 +1,5 @@
-#include <"./Quadtree.h">
-#include <"./Line.h">
+#include "./Quadtree.h"
+#include "./Line.h"
 
 // Make new Quadtree, lines and points not set.
 Quadtree make_quadtree(unsigned int capacity, double x_lo, double y_lo, 
@@ -7,7 +7,7 @@ Quadtree make_quadtree(unsigned int capacity, double x_lo, double y_lo,
 	Quadtree new_tree = {
 		.quadrant_1 = NULL, .quadrant_2 = NULL, .quadrant_3 = NULL,
 		.quadrant_4 = NULL, .line = malloc(sizeof(Line *) * capacity), // TODO:FREE
-		.numOfLines = 0, .p1 = { .x = x_lo, .y = y_lo },
+		.numOfLines = 0, .capacity = capacity, .p1 = { .x = x_lo, .y = y_lo },
 		.p2 = { .x = x_hi, .y = y_hi }
 	};
 	return new_tree;
@@ -94,6 +94,11 @@ void insert_line(Line* l, Quadtree * tree) {
 		insert_line(l, tree->quadrant_4);
 	} else { // must go into this node 
 		// insert_line(l, tree);
+		// double node's line capacity if we are at N
+		if (tree->numOfLines == tree->capacity) {
+			realloc(tree->lines, sizeof(Line *) * capacity * 2);
+			tree->capacity *= 2;
+		}
 		tree->lines[tree->numOfLines++] = l;
 		return;
 	}

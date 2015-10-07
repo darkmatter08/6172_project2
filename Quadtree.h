@@ -20,6 +20,7 @@ struct Quadtree {
   Line** lines;
   unsigned int numOfLines;
   // add capacity
+  unsigned int capacity;
 
   // add in vectors for region it covers
   Vec p1;  // Lower value corner
@@ -28,10 +29,15 @@ struct Quadtree {
 typedef struct Quadtree Quadtree;
 
 // Make new Quadtree
-Quadtree make_quadtree();
+Quadtree make_quadtree(unsigned int capacity, double x_lo, double y_lo, 
+  double x_hi, double y_hi);
 
 // Parses the CollisionWorld into a Quadtree
 void parse_CollisionWord_to_Quadtree(CollisionWord * world);
+
+void insert_line(Line* l, Quadtree * tree);
+
+void reassign_current_to_quadrants(Quadtree * tree);
 
 // Recursively deletes all Quadtrees in this subtree
 void delete_Quadtree(Quadtree * tree);
