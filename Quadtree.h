@@ -1,6 +1,14 @@
+#include <stdlib.h>
+#include "./Line.h"
+#include "./Vec.h"
+#include "./CollisionWorld.h"
+#include <assert.h>
+
 // N is the maximum number of items in a Quadtree before the 
 // quadtree adds its children. 
 #define N 3
+
+typedef struct Quadtree Quadtree;
 
 struct Quadtree {
   // Space is divided into quadrants when more than N lines are 
@@ -26,14 +34,13 @@ struct Quadtree {
   Vec p1;  // Lower value corner
   Vec p2;  // Higher value corner
 };
-typedef struct Quadtree Quadtree;
 
 // Make new Quadtree
 Quadtree make_quadtree(unsigned int capacity, double x_lo, double y_lo, 
   double x_hi, double y_hi);
 
 // Parses the CollisionWorld into a Quadtree
-void parse_CollisionWord_to_Quadtree(CollisionWord * world);
+Quadtree* parse_CollisionWorld_to_Quadtree(CollisionWorld * world);
 
 void insert_line(Line* l, Quadtree * tree);
 
