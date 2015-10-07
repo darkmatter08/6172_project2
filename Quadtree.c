@@ -33,9 +33,9 @@ void insert_line(Line* l, Quadtree * tree) {
 		tree->lines[tree->numOfLines++] = l;
 		return;
 	} else if (tree->quadrant_1 == NULL) { // full leaf
-		assert(tree->quadrant_2);
-		assert(tree->quadrant_3);
-		assert(tree->quadrant_4);
+		assert(!(tree->quadrant_2));
+		assert(!(tree->quadrant_3));
+		assert(!(tree->quadrant_4));
 
 		tree->quadrant_2 = malloc(sizeof(Quadtree));
 		*(tree->quadrant_2) = make_quadtree(N,
@@ -101,18 +101,43 @@ void insert_line(Line* l, Quadtree * tree) {
 
 void reassign_current_to_quadrants(Quadtree * tree) {
 	int current_numOfLines = tree->numOfLines;
+	Line* allLines[current_numOfLines];
+	for (int i = 0; i < tree->numOfLines, i++) {
+		// copy lines to stack and delete lines from tree
+		allLines[i] = tree->lines[i];
+		tree->lines[i] = NULL; // use memset or some other way?
+	}
+	tree->numOfLines = 0;
+	// tree->lines = {0};
+	// memset(tree->lines, NULL);
+	// assert(tree->numOfLines === 0);
 	for (int i = 0; i < current_numOfLines; i++) {
+		// Other strategies:
 		// 1) pop before insert, shifting
 		// 2) New Quadtree into which we insert and reassign pointers for quadtrees
-		insert_line(tree->lines[i], tree);
+		insert_line(allLines[i], tree);
 	}
-	// if(tree->numOfLines > current_numOfLines) { // stuff was reinserted.
-
-	// }
 }
 
 // Recursively deletes all Quadtrees in this subtree
+// on return, the pointer is invalid. 
 void delete_Quadtree(Quadtree * tree) {
-	// not leaf
+	if (tree->quadrant_1) { // not leaf
+		assert(tree->quadrant_2);
+		assert(tree->quadrant_3);
+		assert(tree->quadrant_4);
+
+		delete_Quadtree(tree->quadrant_1);
+		delete_Quadtree(tree->quadrant_2);
+		delete_Quadtree(tree->quadrant_3);
+		delete_Quadtree(tree->quadrant_4);
+	}
+	// full leaf
+	assert(tree->quadrant_1 == NULL);
+	assert(!(tree->quadrant_2));
+	assert(!(tree->quadrant_3));
+	assert(!(tree->quadrant_4));
+	
 	free(&(tree->lines)); // leaf case
+	free(tree);
 }

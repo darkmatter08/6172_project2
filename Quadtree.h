@@ -19,6 +19,7 @@ struct Quadtree {
   // Lines are owned 
   Line** lines;
   unsigned int numOfLines;
+  // add capacity
 
   // add in vectors for region it covers
   Vec p1;  // Lower value corner
