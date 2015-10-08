@@ -69,31 +69,21 @@ void insert_line(Line* l, Quadtree * tree) {
 	}
 	// not leaf case
 	// check where the line fits in
-	if (l->p1.x >= tree->quadrant_1->p1.x &&
-		l->p2.x <  tree->quadrant_1->p2.x &&
-		l->p1.y >= tree->quadrant_1->p1.y &&
-		l->p2.y <  tree->quadrant_1->p2.y) { // q1 case
+	if (can_fit(l, tree->quadrant_1)) { // q1 case
 		
 		insert_line(l, tree->quadrant_1);
 		return;
-	} else if (l->p1.x >= tree->quadrant_2->p1.x &&
-			   l->p2.x <  tree->quadrant_2->p2.x &&
-			   l->p1.y >= tree->quadrant_2->p1.y &&
-			   l->p2.y < tree->quadrant_2->p2.y) { // q2 case
+	} else if (can_fit(l, tree->quadrant_2)) { // q2 case
 		insert_line(l, tree->quadrant_2);
-	} else if (l->p1.x >= tree->quadrant_3->p1.x &&
-			   l->p2.x <  tree->quadrant_3->p2.x &&
-			   l->p1.y >= tree->quadrant_3->p1.y &&
-			   l->p2.y <  tree->quadrant_3->p2.y) { // q3 case
+	} else if (can_fit(l, tree->quadrant_3)) { // q3 case
 		insert_line(l, tree->quadrant_3);
-	} else if (l->p1.x >= tree->quadrant_4->p1.x &&
-			   l->p2.x <  tree->quadrant_4->p2.x &&
-			   l->p1.y >= tree->quadrant_4->p1.y &&
-			   l->p2.y <  tree->quadrant_4->p2.y) { // q4 case
+	} else if (can_fit(l, tree->quadrant_4)) { // q4 case
 		insert_line(l, tree->quadrant_4);
 	} else { // must go into this node 
 		// insert_line(l, tree);
 		// double node's line capacity if we are at N
+		assert(can_fit(l, tree));
+
 		if (tree->numOfLines == tree->capacity) {
 			tree->lines = realloc(tree->lines, sizeof(Line *) * tree->capacity * 2);
 			assert(tree->lines);
@@ -122,6 +112,18 @@ void reassign_current_to_quadrants(Quadtree * tree) {
 		// 2) New Quadtree into which we insert and reassign pointers for quadtrees
 		insert_line(allLines[i], tree);
 	}
+}
+
+// check if line can fit inside a given Quadtree's boundaries
+bool can_fit(Line * line, Quadtree * tree) {
+	return 	line->p1.x >= tree->p1.x &&
+		line->p1.x < tree->p2.x &&
+		line->p2.x >= tree->p1.x &&
+		line->p2.x < tree->p2.x &&
+		line->p1.y >= tree->p1.y &&
+		line->p1.y < tree->p2.y &&
+		line->p2.y >= tree->p1.y &&
+		line->p2.y < tree->p2.y;
 }
 
 // Recursively deletes all Quadtrees in this subtree

@@ -43,9 +43,14 @@ Quadtree make_quadtree(unsigned int capacity, double x_lo, double y_lo,
 // Parses the CollisionWorld into a Quadtree
 Quadtree* parse_CollisionWorld_to_Quadtree(CollisionWorld * world);
 
+// inserts line into Quadtree
 void insert_line(Line* l, Quadtree * tree);
 
+// reinserts lines currently in Quadtree back in (called after child Quadtrees are created)
 void reassign_current_to_quadrants(Quadtree * tree);
+
+// check if line can fit inside a given Quadtree's boundaries
+bool can_fit(Line * line, Quadtree * tree);
 
 // Recursively deletes all Quadtrees in this subtree
 void delete_Quadtree(Quadtree * tree);
