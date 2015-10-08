@@ -18,7 +18,7 @@ Quadtree make_quadtree(unsigned int capacity, double x_lo, double y_lo,
 // Parses the CollisionWorld into a Quadtree
 Quadtree* parse_CollisionWorld_to_Quadtree(CollisionWorld * world) {
 	Quadtree *tree = malloc(sizeof(Quadtree));
-	*tree = make_quadtree(N, BOX_XMIN, BOX_YMIN, BOX_XMAX, BOX_YMAX); // need some type of malloc here.
+	*tree = make_quadtree(N, BOX_XMIN, BOX_YMIN, BOX_XMAX, BOX_YMAX);
 	for (int i = 0; i < world->numOfLines; i++) {
 		Line *l = world->lines[i];
 		insert_line(l, tree);
