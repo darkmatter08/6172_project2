@@ -121,7 +121,7 @@ void insert_4(Quadtree *tree) {
 	check_line_equality(tree->quadrant_2->lines[0], &l1);
 	check_line_equality(tree->quadrant_2->lines[1], &l1);
 	check_line_equality(tree->quadrant_2->lines[2], &l1);
-	//delete_Quadtree(tree); // TODO: Uncomment
+	delete_Quadtree(tree);
 }
 
 void check_line_equality(Line * line1, Line * line2) {
@@ -191,5 +191,5 @@ void insert_4_same_quadrant_and_subquadrant(Quadtree *tree) {
 
 	///////////   filled quadrant asserts   ///////////
 	/// TODO 	
-	//delete_Quadtree(tree); // TODO: Uncomment
+	delete_Quadtree(tree);
 }

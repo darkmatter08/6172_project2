@@ -141,6 +141,7 @@ void delete_Quadtree(Quadtree * tree) {
 		delete_Quadtree(tree->quadrant_2);
 		delete_Quadtree(tree->quadrant_3);
 		delete_Quadtree(tree->quadrant_4);
+		tree->quadrant_1 = tree->quadrant_2 = tree->quadrant_3 = tree->quadrant_4 = NULL;
 	}
 	// full leaf
 	assert(tree->quadrant_1 == NULL);
