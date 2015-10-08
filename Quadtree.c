@@ -28,6 +28,7 @@ Quadtree* parse_CollisionWorld_to_Quadtree(CollisionWorld * world) {
 
 // Insert into the subtree hanging from (and including) tree
 void insert_line(Line* l, Quadtree * tree) {
+	assert(can_fit(l, tree));
 	if (tree->numOfLines < N && tree->quadrant_1 == NULL) { // not-full leaf
 		tree->lines[tree->numOfLines++] = l;
 		return;
@@ -82,7 +83,6 @@ void insert_line(Line* l, Quadtree * tree) {
 	} else { // must go into this node 
 		// insert_line(l, tree);
 		// double node's line capacity if we are at N
-		assert(can_fit(l, tree));
 
 		if (tree->numOfLines == tree->capacity) {
 			tree->lines = realloc(tree->lines, sizeof(Line *) * tree->capacity * 2);
@@ -116,14 +116,25 @@ void reassign_current_to_quadrants(Quadtree * tree) {
 
 // check if line can fit inside a given Quadtree's boundaries
 bool can_fit(Line * line, Quadtree * tree) {
-	return 	line->p1.x >= tree->p1.x &&
+	return 	
+		// check line at beginning of time step
+		line->p1.x >= tree->p1.x &&
 		line->p1.x < tree->p2.x &&
 		line->p2.x >= tree->p1.x &&
 		line->p2.x < tree->p2.x &&
 		line->p1.y >= tree->p1.y &&
 		line->p1.y < tree->p2.y &&
 		line->p2.y >= tree->p1.y &&
-		line->p2.y < tree->p2.y;
+		line->p2.y < tree->p2.y &&
+		// check line at end of time step
+		line->p1.x + line->velocity.x >= tree->p1.x &&
+		line->p1.x + line->velocity.x < tree->p2.x &&
+		line->p2.x + line->velocity.x >= tree->p1.x &&
+		line->p2.x + line->velocity.x < tree->p2.x &&
+		line->p1.y + line->velocity.y >= tree->p1.y &&
+		line->p1.y + line->velocity.y < tree->p2.y &&
+		line->p2.y + line->velocity.y >= tree->p1.y &&
+		line->p2.y + line->velocity.y < tree->p2.y;
 }
 
 // Recursively deletes all Quadtrees in this subtree
