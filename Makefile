@@ -69,6 +69,12 @@ else
   CXXFLAGS += -O3 -DNDEBUG
 endif
 
+## TO USE FOR TESTING: Compile with TEST=1 DEBUG=1 (Need both). Run ./Screensaver
+ifeq ($(TEST),1)
+  # We want to run the test files.
+  CXXFLAGS += -DTEST -g -O0 -gdwarf-3
+endif
+
 
 # By default, make the product.
 all:		$(PRODUCT)

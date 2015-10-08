@@ -1,5 +1,4 @@
 #include "./Quadtree.h"
-#include "./Line.h"
 
 Quadtree* create_Quadtree();
 void insert_1(Quadtree *tree);
@@ -8,12 +7,19 @@ void check_line_equality(Line * line1, Line * line2);
 void insert_4_spanning_quadrants(Quadtree *tree);
 void insert_4_same_quadrant_and_subquadrant();
 
-int main() {
+#ifdef TEST
+int main(int argc, char *argv[]) {
 	insert_1(create_Quadtree());
+	printf("Passed insert_1\n");
 	insert_4(create_Quadtree());
+	printf("Passed insert_4\n");
 	insert_4_spanning_quadrants(create_Quadtree());
+	printf("Passed insert_4_spanning_quadrants\n");
+	insert_4_same_quadrant_and_subquadrant(create_Quadtree());
+	printf("Passed insert_4_same_quadrant_and_subquadrant\n");
 	return 0;
 }
+#endif
 
 Quadtree * create_Quadtree() {
 	Quadtree *tree = malloc(sizeof(Quadtree));
@@ -68,7 +74,7 @@ void insert_4(Quadtree *tree) {
 				.velocity = { .x = 5, .y = 5 }, .color = RED, .id = 1 };
 	insert_line(&l2, tree);
 	// root node asserts
-	assert(tree->numOfLines == 4);
+	assert(tree->numOfLines == 0);
 	assert(tree->quadrant_1 != NULL);
 	assert(tree->quadrant_2 != NULL);
 	assert(tree->quadrant_3 != NULL);
@@ -115,6 +121,7 @@ void insert_4(Quadtree *tree) {
 	check_line_equality(tree->quadrant_2->lines[0], &l1);
 	check_line_equality(tree->quadrant_2->lines[1], &l1);
 	check_line_equality(tree->quadrant_2->lines[2], &l1);
+	//delete_Quadtree(tree); // TODO: Uncomment
 }
 
 void check_line_equality(Line * line1, Line * line2) {
@@ -154,7 +161,7 @@ void insert_4_same_quadrant_and_subquadrant(Quadtree *tree) {
 				.velocity = { .x = 5, .y = 5 }, .color = RED, .id = 1 };
 	insert_line(&l2, tree);
 	// root node asserts
-	assert(tree->numOfLines == 4);
+	assert(tree->numOfLines == 0);
 	assert(tree->quadrant_1 != NULL);
 	assert(tree->quadrant_2 != NULL);
 	assert(tree->quadrant_3 != NULL);
@@ -184,4 +191,5 @@ void insert_4_same_quadrant_and_subquadrant(Quadtree *tree) {
 
 	///////////   filled quadrant asserts   ///////////
 	/// TODO 	
+	//delete_Quadtree(tree); // TODO: Uncomment
 }

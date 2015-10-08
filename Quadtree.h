@@ -3,6 +3,7 @@
 #include "./Vec.h"
 #include "./CollisionWorld.h"
 #include <assert.h>
+#include <stdio.h>
 
 // N is the maximum number of items in a Quadtree before the 
 // quadtree adds its children. 
@@ -51,3 +52,6 @@ void delete_Quadtree(Quadtree * tree);
 
 // Identify collisions
 //void detectCollisions(Quadtree * tree);
+
+// Counts number of lines in the subtree including and hanging from node tree
+// int countLinesInSubtree(Quadtree * tree);

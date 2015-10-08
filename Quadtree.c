@@ -126,6 +126,9 @@ void reassign_current_to_quadrants(Quadtree * tree) {
 
 // Recursively deletes all Quadtrees in this subtree
 // on return, the pointer is invalid. 
+// This function doesn't successfully free the leaves of the root (1st call)
+// so the assert now on line 143 (originally 141) keeps failing. free() doesn't
+// actually free the subtree for some reason. 
 void delete_Quadtree(Quadtree * tree) {
 	if (tree->quadrant_1) { // not leaf
 		assert(tree->quadrant_2);
@@ -143,6 +146,6 @@ void delete_Quadtree(Quadtree * tree) {
 	assert(!(tree->quadrant_3));
 	assert(!(tree->quadrant_4));
 	
-	free(&(tree->lines)); // leaf case
+	free(tree->lines); // leaf case
 	free(tree);
 }
