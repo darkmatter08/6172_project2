@@ -5,7 +5,9 @@ void insert_1(Quadtree *tree);
 void insert_4(Quadtree *tree);
 void check_line_equality(Line * line1, Line * line2);
 void insert_4_spanning_quadrants(Quadtree *tree);
-void insert_4_same_quadrant_and_subquadrant();
+void insert_4_same_quadrant_and_subquadrant(Quadtree *tree);
+void insert_4_velocity_spanning_quadrant(Quadtree *tree);
+void insert_4_velocity_not_spanning_quadrant(Quadtree *tree);
 
 #ifdef TEST
 int main(int argc, char *argv[]) {
@@ -17,6 +19,10 @@ int main(int argc, char *argv[]) {
 	printf("Passed insert_4_spanning_quadrants\n");
 	insert_4_same_quadrant_and_subquadrant(create_Quadtree());
 	printf("Passed insert_4_same_quadrant_and_subquadrant\n");
+	insert_4_velocity_spanning_quadrant(create_Quadtree());
+	printf("Passed insert_4_velocity_spanning_quadrant\n");
+	insert_4_velocity_not_spanning_quadrant(create_Quadtree());
+	printf("Passed insert_4_velocity_not_spanning_quadrant\n");
 	return 0;
 }
 #endif
@@ -191,5 +197,49 @@ void insert_4_same_quadrant_and_subquadrant(Quadtree *tree) {
 
 	///////////   filled quadrant asserts   ///////////
 	/// TODO 	
+	delete_Quadtree(tree);
+}
+
+void insert_4_velocity_spanning_quadrant(Quadtree *tree) {
+	Line l1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 },
+				.velocity = { .x = 0.1, .y = 0.1 }, .color = RED, .id = 1 };
+	insert_line(&l1, tree);
+	insert_line(&l1, tree);
+	insert_line(&l1, tree);
+	assert(tree->numOfLines == 3);
+
+	Line l2 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 },
+				.velocity = { .x = 3, .y = 3 }, .color = RED, .id = 1 };
+	insert_line(&l2, tree);
+	assert(tree->numOfLines == 1);
+	assert(tree->quadrant_1 != NULL);
+	assert(tree->quadrant_2 != NULL);
+	assert(tree->quadrant_3 != NULL);
+	assert(tree->quadrant_4 != NULL);
+
+	assert(tree->quadrant_2->numOfLines == 3);
+
+	delete_Quadtree(tree);
+}
+
+void insert_4_velocity_not_spanning_quadrant(Quadtree *tree) {
+	Line l1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 },
+				.velocity = { .x = 0.1, .y = 0.1 }, .color = RED, .id = 1 };
+	insert_line(&l1, tree);
+	insert_line(&l1, tree);
+	insert_line(&l1, tree);
+	assert(tree->numOfLines == 3);
+
+	Line l2 = { .p1 = { .x = 2.5, .y = 2.5 }, .p2 = { .x = 3.5, .y = 3.5 },
+				.velocity = { .x = -2, .y = -2 }, .color = RED, .id = 1 };
+	insert_line(&l2, tree);
+	assert(tree->numOfLines == 1);
+	assert(tree->quadrant_1 != NULL);
+	assert(tree->quadrant_2 != NULL);
+	assert(tree->quadrant_3 != NULL);
+	assert(tree->quadrant_4 != NULL);
+
+	assert(tree->quadrant_2->numOfLines == 3);
+
 	delete_Quadtree(tree);
 }
