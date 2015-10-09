@@ -9,7 +9,7 @@
 
 // N is the maximum number of items in a Quadtree before the 
 // quadtree adds its children. 
-#define N 3
+#define N 24
 
 typedef struct Quadtree Quadtree;
 
