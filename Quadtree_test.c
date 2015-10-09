@@ -5,7 +5,9 @@ void insert_1(Quadtree *tree);
 void insert_4(Quadtree *tree);
 void check_line_equality(Line * line1, Line * line2);
 void insert_4_spanning_quadrants(Quadtree *tree);
-void insert_4_same_quadrant_and_subquadrant();
+void insert_4_same_quadrant_and_subquadrant(Quadtree *tree);
+void insert_4_velocity_spanning_quadrant(Quadtree *tree);
+void insert_4_velocity_not_spanning_quadrant(Quadtree *tree);
 
 #ifdef TEST
 int main(int argc, char *argv[]) {
@@ -17,6 +19,10 @@ int main(int argc, char *argv[]) {
 	printf("Passed insert_4_spanning_quadrants\n");
 	insert_4_same_quadrant_and_subquadrant(create_Quadtree());
 	printf("Passed insert_4_same_quadrant_and_subquadrant\n");
+	insert_4_velocity_spanning_quadrant(create_Quadtree());
+	printf("Passed insert_4_velocity_spanning_quadrant\n");
+	insert_4_velocity_not_spanning_quadrant(create_Quadtree());
+	printf("Passed insert_4_velocity_not_spanning_quadrant\n");
 	return 0;
 }
 #endif
@@ -45,7 +51,7 @@ Quadtree * create_Quadtree() {
 
 void insert_1(Quadtree *tree) {
 	Line l1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 },
-				.velocity = { .x = 5, .y = 5 }, .color = RED, .id = 1 };
+				.velocity = { .x = 0.01, .y = 0.01 }, .color = RED, .id = 1 };
 	insert_line(&l1, tree);
 
 	assert(tree->numOfLines == 1);
@@ -58,7 +64,7 @@ void insert_1(Quadtree *tree) {
 
 void insert_4(Quadtree *tree) {
 	Line l1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 },
-				.velocity = { .x = 5, .y = 5 }, .color = RED, .id = 1 };
+				.velocity = { .x = 0.01, .y = 0.01 }, .color = RED, .id = 1 };
 	insert_line(&l1, tree);
 	insert_line(&l1, tree);
 	insert_line(&l1, tree);
@@ -71,7 +77,7 @@ void insert_4(Quadtree *tree) {
 
 	// insert a 4th line, should NOT enter into Q2
 	Line l2 = { .p1 = { .x = 4, .y = 4 }, .p2 = { .x = 5, .y = 5 }, // Q4
-				.velocity = { .x = 5, .y = 5 }, .color = RED, .id = 1 };
+				.velocity = { .x = 0.01, .y = 0.01 }, .color = RED, .id = 1 };
 	insert_line(&l2, tree);
 	// root node asserts
 	assert(tree->numOfLines == 0);
@@ -140,7 +146,7 @@ void check_line_equality(Line * line1, Line * line2) {
 
 void insert_4_spanning_quadrants(Quadtree *tree) {
 	Line span_q2_q1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 5, .y = 1 },
-				.velocity = { .x = 5, .y = 5 }, .color = RED, .id = 1 };
+				.velocity = { .x = 0.1, .y = 0.1 }, .color = RED, .id = 1 };
 
 	insert_line(&span_q2_q1, tree);
 	insert_line(&span_q2_q1, tree);
@@ -168,8 +174,8 @@ void insert_4_spanning_quadrants(Quadtree *tree) {
 
 // tree->quandrant_2 further divides into quadrants because of 
 void insert_4_same_quadrant_and_subquadrant(Quadtree *tree) {
-	Line l1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 }, //Q2->Q2
-				.velocity = { .x = 5, .y = 5 }, .color = RED, .id = 1 };
+	Line l1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 }, // Q2->Q2
+				.velocity = { .x = 0.01, .y = 0.01 }, .color = RED, .id = 1 };
 	insert_line(&l1, tree);
 	insert_line(&l1, tree);
 	insert_line(&l1, tree);
@@ -181,8 +187,8 @@ void insert_4_same_quadrant_and_subquadrant(Quadtree *tree) {
 	assert(tree->quadrant_4 == NULL);
 
 	// insert a 4th line, should enter into Q2
-	Line l2 = { .p1 = { .x = 2, .y = 2 }, .p2 = { .x = 2.5, .y = 2.5 }, //Q2->Q4
-				.velocity = { .x = 5, .y = 5 }, .color = RED, .id = 1 };
+	Line l2 = { .p1 = { .x = 2, .y = 2 }, .p2 = { .x = 2.5, .y = 2.5 }, // Q2->Q4
+				.velocity = { .x = 0.01, .y = 0.01 }, .color = RED, .id = 1 };
 	insert_line(&l2, tree);
 	// root node asserts
 	assert(tree->numOfLines == 0);
@@ -215,5 +221,49 @@ void insert_4_same_quadrant_and_subquadrant(Quadtree *tree) {
 
 	///////////   filled quadrant asserts   ///////////
 	/// TODO 	
+	delete_Quadtree(tree);
+}
+
+void insert_4_velocity_spanning_quadrant(Quadtree *tree) {
+	Line l1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 },
+				.velocity = { .x = 0.1, .y = 0.1 }, .color = RED, .id = 1 };
+	insert_line(&l1, tree);
+	insert_line(&l1, tree);
+	insert_line(&l1, tree);
+	assert(tree->numOfLines == 3);
+
+	Line l2 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 },
+				.velocity = { .x = 3, .y = 3 }, .color = RED, .id = 1 };
+	insert_line(&l2, tree);
+	assert(tree->numOfLines == 1);
+	assert(tree->quadrant_1 != NULL);
+	assert(tree->quadrant_2 != NULL);
+	assert(tree->quadrant_3 != NULL);
+	assert(tree->quadrant_4 != NULL);
+
+	assert(tree->quadrant_2->numOfLines == 3);
+
+	delete_Quadtree(tree);
+}
+
+void insert_4_velocity_not_spanning_quadrant(Quadtree *tree) {
+	Line l1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 },
+				.velocity = { .x = 0.1, .y = 0.1 }, .color = RED, .id = 1 };
+	insert_line(&l1, tree);
+	insert_line(&l1, tree);
+	insert_line(&l1, tree);
+	assert(tree->numOfLines == 3);
+
+	Line l2 = { .p1 = { .x = 2.5, .y = 2.5 }, .p2 = { .x = 3.5, .y = 3.5 },
+				.velocity = { .x = -2, .y = -2 }, .color = RED, .id = 1 };
+	insert_line(&l2, tree);
+	assert(tree->numOfLines == 1);
+	assert(tree->quadrant_1 != NULL);
+	assert(tree->quadrant_2 != NULL);
+	assert(tree->quadrant_3 != NULL);
+	assert(tree->quadrant_4 != NULL);
+
+	assert(tree->quadrant_2->numOfLines == 3);
+
 	delete_Quadtree(tree);
 }
