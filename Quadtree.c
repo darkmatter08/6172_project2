@@ -169,7 +169,11 @@ void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * 
 		Line * l1 = tree->lines[i];
 		Line * l2 = line;
 
-    if (compareLines(l1, l2) >= 0) {
+		if (compareLines(l1, l2) == 0) {
+			continue;
+		}
+
+    if (compareLines(l1, l2) > 0) {
       Line *temp = l1;
       l1 = l2;
       l2 = temp;
@@ -183,10 +187,10 @@ void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * 
 	}
 
 	// check if children exist
-	if (!(tree->quadrant_1)) {
-		assert(!(tree->quadrant_2));
-		assert(!(tree->quadrant_3));
-		assert(!(tree->quadrant_4));
+	if (tree->quadrant_1) {
+		assert(tree->quadrant_2);
+		assert(tree->quadrant_3);
+		assert(tree->quadrant_4);
 
 		detect_collisions_recursive(line, tree->quadrant_1, collisionWorld, intersectionEventList);
 		detect_collisions_recursive(line, tree->quadrant_2, collisionWorld, intersectionEventList);
@@ -204,10 +208,10 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 	}
 
 	// if children exist, do this recursively
-	if (!(tree->quadrant_1)) {
-		assert(!(tree->quadrant_2));
-		assert(!(tree->quadrant_3));
-		assert(!(tree->quadrant_4));
+	if (tree->quadrant_1) {
+		assert(tree->quadrant_2);
+		assert(tree->quadrant_3);
+		assert(tree->quadrant_4);
 
 		detect_collisions(tree->quadrant_1, collisionWorld, intersectionEventList);
 		detect_collisions(tree->quadrant_2, collisionWorld, intersectionEventList);
