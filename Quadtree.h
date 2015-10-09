@@ -2,6 +2,8 @@
 #include "./Line.h"
 #include "./Vec.h"
 #include "./CollisionWorld.h"
+#include "./IntersectionDetection.h"
+#include "./IntersectionEventList.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -55,8 +57,11 @@ bool can_fit(Line * line, Quadtree * tree);
 // Recursively deletes all Quadtrees in this subtree
 void delete_Quadtree(Quadtree * tree);
 
-// Identify collisions
-//void detectCollisions(Quadtree * tree);
+// Identify collisions recursively for a given line
+void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList);
+
+// Identify collisions in a particular quadtree
+void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList);
 
 // Counts number of lines in the subtree including and hanging from node tree
 // int countLinesInSubtree(Quadtree * tree);

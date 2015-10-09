@@ -31,6 +31,7 @@
 #include "./IntersectionDetection.h"
 #include "./IntersectionEventList.h"
 #include "./Line.h"
+#include "./Quadtree.h"
 
 CollisionWorld* CollisionWorld_new(const unsigned int capacity) {
   assert(capacity > 0);
@@ -128,31 +129,35 @@ void CollisionWorld_detectIntersection(CollisionWorld* collisionWorld) {
   IntersectionEventList intersectionEventList = IntersectionEventList_make();
 
   // Replace as part of basic QuadTree
+  Quadtree * tree = parse_CollisionWorld_to_Quadtree(collisionWorld);
+  detect_collisions(tree, collisionWorld, &intersectionEventList);
+  delete_Quadtree(tree);
+
   // Test all line-line pairs to see if they will intersect before the
   // next time step.
-  for (int i = 0; i < collisionWorld->numOfLines; i++) {
-    Line *l1 = collisionWorld->lines[i];
+  // for (int i = 0; i < collisionWorld->numOfLines; i++) {
+  //   Line *l1 = collisionWorld->lines[i];
 
-    for (int j = i + 1; j < collisionWorld->numOfLines; j++) {
-      Line *l2 = collisionWorld->lines[j];
+  //   for (int j = i + 1; j < collisionWorld->numOfLines; j++) {
+  //     Line *l2 = collisionWorld->lines[j];
 
-      // intersect expects compareLines(l1, l2) < 0 to be true.
-      // Swap l1 and l2, if necessary.
-      if (compareLines(l1, l2) >= 0) {
-        Line *temp = l1;
-        l1 = l2;
-        l2 = temp;
-      }
+  //     // intersect expects compareLines(l1, l2) < 0 to be true.
+  //     // Swap l1 and l2, if necessary.
+  //     if (compareLines(l1, l2) >= 0) {
+  //       Line *temp = l1;
+  //       l1 = l2;
+  //       l2 = temp;
+  //     }
 
-      IntersectionType intersectionType =
-          intersect(l1, l2, collisionWorld->timeStep);
-      if (intersectionType != NO_INTERSECTION) {
-        IntersectionEventList_appendNode(&intersectionEventList, l1, l2,
-                                         intersectionType);
-        collisionWorld->numLineLineCollisions++;
-      }
-    }
-  }
+  //     IntersectionType intersectionType =
+  //         intersect(l1, l2, collisionWorld->timeStep);
+  //     if (intersectionType != NO_INTERSECTION) {
+  //       IntersectionEventList_appendNode(&intersectionEventList, l1, l2,
+  //                                        intersectionType);
+  //       collisionWorld->numLineLineCollisions++;
+  //     }
+  //   }
+  // }
 
   // Does this need to be changed as part of the basic QuadTree implementation?
   // Sort the intersection event list.
