@@ -28,7 +28,11 @@ Quadtree* parse_CollisionWorld_to_Quadtree(CollisionWorld * world) {
 
 // Insert into the subtree hanging from (and including) tree
 void insert_line(Line* l, Quadtree * tree) {
-	assert(can_fit(l, tree));
+	// assert(can_fit(l, tree));
+	// when parallelogram falls outside of CollisionWorld boundaries this check 
+	// fails, when commented we insert line into root of tree instead
+	// 809ff63b0761261dbe878372efdcb02defbaae46
+
 	if (tree->numOfLines < N && tree->quadrant_1 == NULL) { // not-full leaf
 		tree->lines[tree->numOfLines++] = l;
 		return;
@@ -71,9 +75,7 @@ void insert_line(Line* l, Quadtree * tree) {
 	// not leaf case
 	// check where the line fits in
 	if (can_fit(l, tree->quadrant_1)) { // q1 case
-		
 		insert_line(l, tree->quadrant_1);
-		return;
 	} else if (can_fit(l, tree->quadrant_2)) { // q2 case
 		insert_line(l, tree->quadrant_2);
 	} else if (can_fit(l, tree->quadrant_3)) { // q3 case
@@ -90,7 +92,6 @@ void insert_line(Line* l, Quadtree * tree) {
 			tree->capacity *= 2;
 		}
 		tree->lines[tree->numOfLines++] = l;
-		return;
 	}
 }
 
@@ -138,7 +139,10 @@ bool can_fit(Line * line, Quadtree * tree) {
 }
 
 // Recursively deletes all Quadtrees in this subtree
-// on return, the tree pointer is invalid. 
+// on return, the pointer is invalid. 
+// This function doesn't successfully free the leaves of the root (1st call)
+// so the assert now on line 143 (originally 141) keeps failing. free() doesn't
+// actually free the subtree for some reason. 
 void delete_Quadtree(Quadtree * tree) {
 	if (tree->quadrant_1) { // not leaf
 		assert(tree->quadrant_2);
