@@ -139,12 +139,36 @@ void check_line_equality(Line * line1, Line * line2) {
 }
 
 void insert_4_spanning_quadrants(Quadtree *tree) {
-	;
+	Line span_q2_q1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 5, .y = 1 },
+				.velocity = { .x = 5, .y = 5 }, .color = RED, .id = 1 };
+
+	insert_line(&span_q2_q1, tree);
+	insert_line(&span_q2_q1, tree);
+	insert_line(&span_q2_q1, tree);
+
+	// check that we haven't divided into quadrants yet
+	assert(tree->numOfLines == 3);
+	assert(tree->quadrant_1 == NULL);
+	assert(tree->quadrant_2 == NULL);
+	assert(tree->quadrant_3 == NULL);
+	assert(tree->quadrant_4 == NULL);
+
+	// insert Line span_q2_q1, expect that leaves sit at tree, although 
+	// quadrants are initialized
+	insert_line(&span_q2_q1, tree);
+
+	assert(tree->quadrant_1);
+	assert(tree->quadrant_2);
+	assert(tree->quadrant_3);
+	assert(tree->quadrant_4);
+
+	assert(tree->numOfLines == 4);
+	assert(tree->capacity == 6);
 }
 
 // tree->quandrant_2 further divides into quadrants because of 
 void insert_4_same_quadrant_and_subquadrant(Quadtree *tree) {
-	Line l1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 }, // Q2->Q2
+	Line l1 = { .p1 = { .x = 0.5, .y = 0.5 }, .p2 = { .x = 1, .y = 1 }, //Q2->Q2
 				.velocity = { .x = 5, .y = 5 }, .color = RED, .id = 1 };
 	insert_line(&l1, tree);
 	insert_line(&l1, tree);
@@ -157,7 +181,7 @@ void insert_4_same_quadrant_and_subquadrant(Quadtree *tree) {
 	assert(tree->quadrant_4 == NULL);
 
 	// insert a 4th line, should enter into Q2
-	Line l2 = { .p1 = { .x = 2, .y = 2 }, .p2 = { .x = 2.5, .y = 2.5 }, // Q2->Q4
+	Line l2 = { .p1 = { .x = 2, .y = 2 }, .p2 = { .x = 2.5, .y = 2.5 }, //Q2->Q4
 				.velocity = { .x = 5, .y = 5 }, .color = RED, .id = 1 };
 	insert_line(&l2, tree);
 	// root node asserts

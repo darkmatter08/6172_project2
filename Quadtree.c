@@ -127,10 +127,7 @@ bool can_fit(Line * line, Quadtree * tree) {
 }
 
 // Recursively deletes all Quadtrees in this subtree
-// on return, the pointer is invalid. 
-// This function doesn't successfully free the leaves of the root (1st call)
-// so the assert now on line 143 (originally 141) keeps failing. free() doesn't
-// actually free the subtree for some reason. 
+// on return, the tree pointer is invalid. 
 void delete_Quadtree(Quadtree * tree) {
 	if (tree->quadrant_1) { // not leaf
 		assert(tree->quadrant_2);
