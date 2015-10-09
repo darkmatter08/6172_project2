@@ -85,6 +85,8 @@ void LineDemo_createLines(LineDemo* lineDemo) {
     line->id = lineId;
     lineId++;
 
+    line->relative_vector = Vec_makeFromLine(*line);
+
     // transfer ownership of line to collisionWorld
     CollisionWorld_addLine(lineDemo->collisionWorld, line);
   }
