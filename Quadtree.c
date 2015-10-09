@@ -31,7 +31,6 @@ void insert_line(Line* l, Quadtree * tree) {
 	// assert(can_fit(l, tree));
 	// when parallelogram falls outside of CollisionWorld boundaries this check 
 	// fails, when commented we insert line into root of tree instead
-	// 809ff63b0761261dbe878372efdcb02defbaae46
 
 	if (tree->numOfLines < N && tree->quadrant_1 == NULL) { // not-full leaf
 		tree->lines[tree->numOfLines++] = l;
@@ -165,6 +164,7 @@ void delete_Quadtree(Quadtree * tree) {
 	free(tree);
 }
 
+// line is not in tree
 void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList) {
 	assert(tree);
 
@@ -173,21 +173,17 @@ void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * 
 		Line * l1 = tree->lines[i];
 		Line * l2 = line;
 
-		if (compareLines(l1, l2) == 0) {
-			continue;
+		if (compareLines(l1, l2) > 0) {
+			Line *temp = l1;
+			l1 = l2;
+			l2 = temp;
 		}
 
-    if (compareLines(l1, l2) > 0) {
-      Line *temp = l1;
-      l1 = l2;
-      l2 = temp;
-    }
-
 		IntersectionType intersectionType = intersect(l1, l2, collisionWorld->timeStep);
-    if (intersectionType != NO_INTERSECTION) {
-      IntersectionEventList_appendNode(intersectionEventList, l1, l2, intersectionType);
-      collisionWorld->numLineLineCollisions++;
-    }
+		if (intersectionType != NO_INTERSECTION) {
+			IntersectionEventList_appendNode(intersectionEventList, l1, l2, intersectionType);
+			collisionWorld->numLineLineCollisions++;
+		}
 	}
 
 	// check if children exist
@@ -208,7 +204,33 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 
 	// check everything at the root
 	for (int i = 0; i < tree->numOfLines; i++) {
-		detect_collisions_recursive(tree->lines[i], tree, collisionWorld, intersectionEventList);
+		for (int j = i + 1; j < tree->numOfLines; j++) {
+			Line * l1 = tree->lines[i];
+			Line * l2 = tree->lines[j];
+
+			if (compareLines(l1, l2) > 0) {
+				Line *temp = l1;
+				l1 = l2;
+				l2 = temp;
+			}
+
+			IntersectionType intersectionType = intersect(l1, l2, collisionWorld->timeStep);
+			if (intersectionType != NO_INTERSECTION) {
+				IntersectionEventList_appendNode(intersectionEventList, l1, l2, intersectionType);
+				collisionWorld->numLineLineCollisions++;
+			}
+		}
+
+		if (tree->quadrant_1) {
+			assert(tree->quadrant_2);
+			assert(tree->quadrant_3);
+			assert(tree->quadrant_4);
+
+			detect_collisions_recursive(tree->lines[i], tree->quadrant_1, collisionWorld, intersectionEventList);
+			detect_collisions_recursive(tree->lines[i], tree->quadrant_2, collisionWorld, intersectionEventList);
+			detect_collisions_recursive(tree->lines[i], tree->quadrant_3, collisionWorld, intersectionEventList);
+			detect_collisions_recursive(tree->lines[i], tree->quadrant_4, collisionWorld, intersectionEventList);
+		}
 	}
 
 	// if children exist, do this recursively
