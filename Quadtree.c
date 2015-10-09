@@ -2,12 +2,12 @@
 
 // Make new Quadtree, lines and points not set.
 Quadtree make_quadtree(unsigned int capacity, double x_lo, double y_lo, 
-	double x_hi, double y_hi) {
+	double x_hi, double y_hi, unsigned int depth) {
 	Quadtree new_tree = {
 		.quadrant_1 = NULL, .quadrant_2 = NULL, .quadrant_3 = NULL,
 		.quadrant_4 = NULL, .lines = malloc(sizeof(Line *) * capacity), // TODO:FREE
 		.numOfLines = 0, .capacity = capacity, .p1 = { .x = x_lo, .y = y_lo },
-		.p2 = { .x = x_hi, .y = y_hi }
+		.p2 = { .x = x_hi, .y = y_hi }, .depth=depth
 	};
 	return new_tree;
 }
@@ -18,7 +18,7 @@ Quadtree make_quadtree(unsigned int capacity, double x_lo, double y_lo,
 // Parses the CollisionWorld into a Quadtree
 Quadtree* parse_CollisionWorld_to_Quadtree(CollisionWorld * world) {
 	Quadtree *tree = malloc(sizeof(Quadtree));
-	*tree = make_quadtree(N, BOX_XMIN, BOX_YMIN, BOX_XMAX, BOX_YMAX);
+	*tree = make_quadtree(N, BOX_XMIN, BOX_YMIN, BOX_XMAX, BOX_YMAX, 0);
 	for (int i = 0; i < world->numOfLines; i++) {
 		Line *l = world->lines[i];
 		insert_line(l, tree);
@@ -35,6 +35,23 @@ void insert_line(Line* l, Quadtree * tree) {
 	if (tree->numOfLines < N && tree->quadrant_1 == NULL) { // not-full leaf
 		tree->lines[tree->numOfLines++] = l;
 		return;
+	} else if (tree->depth == MAX_DEPTH) { // at MAX_DEPTH
+		// No children should be present
+		assert(!(tree->quadrant_1));
+		assert(!(tree->quadrant_2));
+		assert(!(tree->quadrant_3));
+		assert(!(tree->quadrant_4));
+
+		// printf("REACHED MAX DEPTH\n");
+
+		// Same as not leaf - spanning line
+		if (tree->numOfLines == tree->capacity) {
+			tree->lines = realloc(tree->lines, sizeof(Line *) * tree->capacity * 2);
+			assert(tree->lines);
+			tree->capacity *= 2;
+		}
+		tree->lines[tree->numOfLines++] = l;
+		return;
 	} else if (tree->quadrant_1 == NULL) { // full leaf
 		assert(!(tree->quadrant_2));
 		assert(!(tree->quadrant_3));
@@ -45,28 +62,32 @@ void insert_line(Line* l, Quadtree * tree) {
 			tree->p1.x,
 			tree->p1.y, 
 			tree->p1.x + (tree->p2.x - tree->p1.x)/2, 
-			tree->p1.y + (tree->p2.y - tree->p1.y)/2
+			tree->p1.y + (tree->p2.y - tree->p1.y)/2,
+			tree->depth+1
 		);
 		tree->quadrant_1 = malloc(sizeof(Quadtree));
 		*(tree->quadrant_1) = make_quadtree(N,
 			tree->p1.x + (tree->p2.x - tree->p1.x)/2,
 			tree->p1.y, 
 			tree->p2.x,
-			tree->p1.y + (tree->p2.y - tree->p1.y)/2
+			tree->p1.y + (tree->p2.y - tree->p1.y)/2,
+			tree->depth+1
 		);
 		tree->quadrant_3 = malloc(sizeof(Quadtree));
 		*(tree->quadrant_3) = make_quadtree(N,
 			tree->p1.x,
 			tree->p1.y + (tree->p2.y - tree->p1.y)/2,
 			tree->p1.x + (tree->p2.x - tree->p1.x)/2,
-			tree->p2.y
+			tree->p2.y,
+			tree->depth+1
 		);
 		tree->quadrant_4 = malloc(sizeof(Quadtree));
 		*(tree->quadrant_4) = make_quadtree(N,
 			tree->p1.x + (tree->p2.x - tree->p1.x)/2, 
 			tree->p1.y + (tree->p2.y - tree->p1.y)/2,
 			tree->p2.x,
-			tree->p2.y
+			tree->p2.y,
+			tree->depth+1
 		);
 		// reassign stuff currently in tree->line into quadrants
 		reassign_current_to_quadrants(tree);
@@ -82,9 +103,7 @@ void insert_line(Line* l, Quadtree * tree) {
 	} else if (can_fit(l, tree->quadrant_4)) { // q4 case
 		insert_line(l, tree->quadrant_4);
 	} else { // must go into this node 
-		// insert_line(l, tree);
 		// double node's line capacity if we are at N
-
 		if (tree->numOfLines == tree->capacity) {
 			tree->lines = realloc(tree->lines, sizeof(Line *) * tree->capacity * 2);
 			assert(tree->lines);

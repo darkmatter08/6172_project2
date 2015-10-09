@@ -10,6 +10,8 @@
 // N is the maximum number of items in a Quadtree before the 
 // quadtree adds its children. 
 #define N 24
+// Max Quadtree Depth
+#define MAX_DEPTH 24
 
 typedef struct Quadtree Quadtree;
 
@@ -36,11 +38,13 @@ struct Quadtree {
   // add in vectors for region it covers
   Vec p1;  // Lower value corner
   Vec p2;  // Higher value corner
+
+  unsigned int depth;
 };
 
 // Make new Quadtree
 Quadtree make_quadtree(unsigned int capacity, double x_lo, double y_lo, 
-  double x_hi, double y_hi);
+  double x_hi, double y_hi, unsigned int depth);
 
 // Parses the CollisionWorld into a Quadtree
 Quadtree* parse_CollisionWorld_to_Quadtree(CollisionWorld * world);
