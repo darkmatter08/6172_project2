@@ -99,7 +99,7 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
 }
 
 // Check if a point is in the parallelogram.
-bool pointInParallelogram(Vec point, Vec p1, Vec p2, Vec p3, Vec p4) {
+inline bool pointInParallelogram(Vec point, Vec p1, Vec p2, Vec p3, Vec p4) {
   double d1 = direction(p1, p2, point);
   double d2 = direction(p3, p4, point);
   double d3 = direction(p1, p3, point);
@@ -113,7 +113,7 @@ bool pointInParallelogram(Vec point, Vec p1, Vec p2, Vec p3, Vec p4) {
 }
 
 // Check if two lines intersect.
-bool intersectLines(Vec p1, Vec p2, Vec p3, Vec p4) {
+inline bool intersectLines(Vec p1, Vec p2, Vec p3, Vec p4) {
   // Relative orientation
   double d1 = direction(p3, p4, p1);
   double d2 = direction(p3, p4, p2);
