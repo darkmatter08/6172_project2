@@ -62,7 +62,7 @@ bool can_fit(Line * line, Quadtree * tree);
 void delete_Quadtree(Quadtree * tree);
 
 // Identify collisions recursively for a given line
-unsigned int detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList);
+unsigned int detect_collisions_with_line(Line * line, Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList);
 
 // Identify collisions in a particular quadtree
 unsigned int detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList);
