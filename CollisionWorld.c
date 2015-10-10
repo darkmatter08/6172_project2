@@ -130,7 +130,7 @@ void CollisionWorld_detectIntersection(CollisionWorld* collisionWorld) {
 
 	// Replace as part of basic QuadTree
 	Quadtree * tree = parse_CollisionWorld_to_Quadtree(collisionWorld);
-	detect_collisions(tree, collisionWorld, &intersectionEventList);
+	collisionWorld->numLineLineCollisions += detect_collisions(tree, collisionWorld, &intersectionEventList);
 	delete_Quadtree(tree);
 
 	// Sort the intersection event list.

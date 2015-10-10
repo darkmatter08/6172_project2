@@ -184,9 +184,10 @@ void delete_Quadtree(Quadtree * tree) {
 }
 
 // line is not in tree
-void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList) {
+unsigned int detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList) {
 	assert(tree);
 
+	unsigned int numCollisions = 0;
 	// do intersection detection at root of quadtree
 	for (int i = 0; i < tree->numOfLines; i++) {
 		Line * l1 = tree->lines[i];
@@ -201,7 +202,7 @@ void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * 
 		IntersectionType intersectionType = intersect(l1, l2, collisionWorld->timeStep);
 		if (intersectionType != NO_INTERSECTION) {
 			IntersectionEventList_appendNode(intersectionEventList, l1, l2, intersectionType);
-			collisionWorld->numLineLineCollisions++;
+			numCollisions++;
 		}
 	}
 
@@ -211,16 +212,18 @@ void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * 
 		assert(tree->quadrant_3);
 		assert(tree->quadrant_4);
 
-		detect_collisions_recursive(line, tree->quadrant_1, collisionWorld, intersectionEventList);
-		detect_collisions_recursive(line, tree->quadrant_2, collisionWorld, intersectionEventList);
-		detect_collisions_recursive(line, tree->quadrant_3, collisionWorld, intersectionEventList);
-		detect_collisions_recursive(line, tree->quadrant_4, collisionWorld, intersectionEventList);
+		numCollisions += detect_collisions_recursive(line, tree->quadrant_1, collisionWorld, intersectionEventList);
+		numCollisions += detect_collisions_recursive(line, tree->quadrant_2, collisionWorld, intersectionEventList);
+		numCollisions += detect_collisions_recursive(line, tree->quadrant_3, collisionWorld, intersectionEventList);
+		numCollisions += detect_collisions_recursive(line, tree->quadrant_4, collisionWorld, intersectionEventList);
 	}
+	return numCollisions;
 }
 
-void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList) {
+unsigned int detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList) {
 	assert(tree);
 
+	unsigned int numCollisions = 0;
 	// check everything at the root
 	for (int i = 0; i < tree->numOfLines; i++) {
 		for (int j = i + 1; j < tree->numOfLines; j++) {
@@ -236,7 +239,7 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 			IntersectionType intersectionType = intersect(l1, l2, collisionWorld->timeStep);
 			if (intersectionType != NO_INTERSECTION) {
 				IntersectionEventList_appendNode(intersectionEventList, l1, l2, intersectionType);
-				collisionWorld->numLineLineCollisions++;
+				numCollisions++;
 			}
 		}
 
@@ -245,10 +248,10 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 			assert(tree->quadrant_3);
 			assert(tree->quadrant_4);
 
-			detect_collisions_recursive(tree->lines[i], tree->quadrant_1, collisionWorld, intersectionEventList);
-			detect_collisions_recursive(tree->lines[i], tree->quadrant_2, collisionWorld, intersectionEventList);
-			detect_collisions_recursive(tree->lines[i], tree->quadrant_3, collisionWorld, intersectionEventList);
-			detect_collisions_recursive(tree->lines[i], tree->quadrant_4, collisionWorld, intersectionEventList);
+			numCollisions += detect_collisions_recursive(tree->lines[i], tree->quadrant_1, collisionWorld, intersectionEventList);
+			numCollisions += detect_collisions_recursive(tree->lines[i], tree->quadrant_2, collisionWorld, intersectionEventList);
+			numCollisions += detect_collisions_recursive(tree->lines[i], tree->quadrant_3, collisionWorld, intersectionEventList);
+			numCollisions += detect_collisions_recursive(tree->lines[i], tree->quadrant_4, collisionWorld, intersectionEventList);
 		}
 	}
 
@@ -258,9 +261,10 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 		assert(tree->quadrant_3);
 		assert(tree->quadrant_4);
 
-		detect_collisions(tree->quadrant_1, collisionWorld, intersectionEventList);
-		detect_collisions(tree->quadrant_2, collisionWorld, intersectionEventList);
-		detect_collisions(tree->quadrant_3, collisionWorld, intersectionEventList);
-		detect_collisions(tree->quadrant_4, collisionWorld, intersectionEventList);
+		numCollisions += detect_collisions(tree->quadrant_1, collisionWorld, intersectionEventList);
+		numCollisions += detect_collisions(tree->quadrant_2, collisionWorld, intersectionEventList);
+		numCollisions += detect_collisions(tree->quadrant_3, collisionWorld, intersectionEventList);
+		numCollisions += detect_collisions(tree->quadrant_4, collisionWorld, intersectionEventList);
 	}
+	return numCollisions;
 }
