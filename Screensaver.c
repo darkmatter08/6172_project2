@@ -44,6 +44,7 @@ void lineMain(LineDemo *lineDemo) {
   }
 }
 
+#ifndef TEST
 int main(int argc, char *argv[]) {
   int optchar;
 #ifndef PROFILE_BUILD
@@ -127,3 +128,4 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
+#endif

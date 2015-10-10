@@ -60,6 +60,8 @@ struct Line {
   Color color;  // The line's color.
 
   unsigned int id;  // Unique line ID.
+
+  Vec relative_vector;  // length vector
 };
 typedef struct Line Line;
 

@@ -34,8 +34,9 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
   Vec velocity;
   Vec p1;
   Vec p2;
-  Vec v1 = Vec_makeFromLine(*l1);
-  Vec v2 = Vec_makeFromLine(*l2);
+  // Length Calc?
+  Vec v1 = l1->relative_vector;//Vec_makeFromLine(*l1);
+  Vec v2 = l2->relative_vector;//Vec_makeFromLine(*l2);
 
   // Get relative velocity.
   velocity = Vec_subtract(l2->velocity, l1->velocity);
@@ -69,7 +70,7 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
 
   if (pointInParallelogram(l1->p1, l2->p1, l2->p2, p1, p2)
       && pointInParallelogram(l1->p2, l2->p1, l2->p2, p1, p2)) {
-    return L1_WITH_L2;
+    return L1_WITH_L2; // What's the difference wtih :67?
   }
 
   if (num_line_intersections == 0) {
