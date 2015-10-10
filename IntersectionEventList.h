@@ -49,6 +49,7 @@ void IntersectionEventNode_swapData(IntersectionEventNode* node1,
 struct IntersectionEventList {
   IntersectionEventNode* head;
   IntersectionEventNode* tail;
+  unsigned int size;
 };
 typedef struct IntersectionEventList IntersectionEventList;
 

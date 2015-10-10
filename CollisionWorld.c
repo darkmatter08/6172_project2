@@ -145,6 +145,8 @@ void CollisionWorld_detectIntersection(CollisionWorld* collisionWorld) {
 
 	CILK_C_UNREGISTER_REDUCER(X);
 
+	collisionWorld->numLineLineCollisions += intersectionEventList.size;
+
 	// Sort the intersection event list.
 	IntersectionEventNode* startNode = intersectionEventList.head;
 	while (startNode != NULL) {

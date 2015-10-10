@@ -201,7 +201,7 @@ void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * 
 		IntersectionType intersectionType = intersect(l1, l2, collisionWorld->timeStep);
 		if (intersectionType != NO_INTERSECTION) {
 			IntersectionEventList_appendNode(&REDUCER_VIEW(*X), l1, l2, intersectionType);
-			collisionWorld->numLineLineCollisions++;
+			// collisionWorld->numLineLineCollisions++;
 		}
 	}
 
@@ -244,7 +244,7 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 			IntersectionType intersectionType = intersect(l1, l2, collisionWorld->timeStep);
 			if (intersectionType != NO_INTERSECTION) {
 				IntersectionEventList_appendNode(&REDUCER_VIEW(*X), l1, l2, intersectionType);
-				collisionWorld->numLineLineCollisions++;
+				// collisionWorld->numLineLineCollisions++;
 			}
 		}
 

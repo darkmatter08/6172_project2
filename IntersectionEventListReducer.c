@@ -15,7 +15,7 @@ void IntersectionEventList_reduce(void* key, void* left, void* right) {
 	if (!(list1->head)) { // nothing in list1
     list1->head = list2->head;
     list1->tail = list2->tail;
-    // list1->size = list2->size;
+    list1->size = list2->size;
 	}
 	else if (!(list2->head)) { // nothing in list2
 	  ; // do nothing
@@ -23,11 +23,11 @@ void IntersectionEventList_reduce(void* key, void* left, void* right) {
 	else { // things in both list1 and list2
 	  list1->tail->next = list2->head;
 	  list1->tail = list2->tail;
-	  // list1->size += list2->size;
+	  list1->size += list2->size;
 	}
 	// reset list2
 	list2->head = list2->tail = NULL;
-	// list2->size = 0;
+	list2->size = 0;
 }
 
 // Sets *value to the the identity value.
