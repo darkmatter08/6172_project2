@@ -212,10 +212,10 @@ void CollisionWorld_collisionSolver(CollisionWorld* collisionWorld,
 	Vec face;
 	Vec normal;
 	if (intersectionType == L1_WITH_L2) {
-		Vec v = Vec_makeFromLine(*l2);
+		Vec v = l2->relative_vector;//Vec_makeFromLine(*l2);
 		face = Vec_normalize(v);
 	} else {
-		Vec v = Vec_makeFromLine(*l1);
+		Vec v = l1->relative_vector;//Vec_makeFromLine(*l1);
 		face = Vec_normalize(v);
 	}
 	normal = Vec_orthogonal(face);
@@ -228,8 +228,8 @@ void CollisionWorld_collisionSolver(CollisionWorld* collisionWorld,
 	double v2Normal = Vec_dotProduct(l2->velocity, normal);
 
 	// Compute the mass of each line (we simply use its length).
-	double m1 = Vec_length(Vec_subtract(l1->p1, l1->p2));
-	double m2 = Vec_length(Vec_subtract(l2->p1, l2->p2));
+	double m1 = Vec_length(l1->relative_vector);
+	double m2 = Vec_length(l2->relative_vector);
 
 	// Perform the collision calculation (computes the new velocities along
 	// the direction normal to the collision face such that momentum and
