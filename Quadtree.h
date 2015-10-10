@@ -12,7 +12,7 @@
 // quadtree adds its children. 
 #define N 24
 // Max Quadtree Depth
-#define MAX_DEPTH 24
+#define MAX_DEPTH 3
 
 typedef struct Quadtree Quadtree;
 
