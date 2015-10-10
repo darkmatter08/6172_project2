@@ -126,12 +126,26 @@ void CollisionWorld_lineWallCollision(CollisionWorld* collisionWorld) {
 }
 
 void CollisionWorld_detectIntersection(CollisionWorld* collisionWorld) {
-	IntersectionEventList intersectionEventList = IntersectionEventList_make();
+	// IntersectionEventList intersectionEventList = IntersectionEventList_make();
+
+	IntersectionEventList_reducer X = CILK_C_INIT_REDUCER(
+		/* type */ IntersectionEventList, IntersectionEventList_reduce, 
+		IntersectionEventList_identity, IntersectionEventList_destroy,
+		/* initial value */ IntersectionEventList_make()
+	);
+
+	CILK_C_REGISTER_REDUCER(X);
 
 	// Replace as part of basic QuadTree
 	Quadtree * tree = parse_CollisionWorld_to_Quadtree(collisionWorld);
-	collisionWorld->numLineLineCollisions += detect_collisions(tree, collisionWorld, &intersectionEventList);
+	detect_collisions(tree, collisionWorld, &X);
 	delete_Quadtree(tree);
+
+	IntersectionEventList intersectionEventList = X.value;
+
+	CILK_C_UNREGISTER_REDUCER(X);
+
+	collisionWorld->numLineLineCollisions += intersectionEventList.size;
 
 	// Sort the intersection event list.
 	IntersectionEventNode* startNode = intersectionEventList.head;
@@ -212,10 +226,10 @@ void CollisionWorld_collisionSolver(CollisionWorld* collisionWorld,
 	Vec face;
 	Vec normal;
 	if (intersectionType == L1_WITH_L2) {
-		Vec v = Vec_makeFromLine(*l2);
+		Vec v = l2->relative_vector;//Vec_makeFromLine(*l2);
 		face = Vec_normalize(v);
 	} else {
-		Vec v = Vec_makeFromLine(*l1);
+		Vec v = l1->relative_vector;//Vec_makeFromLine(*l1);
 		face = Vec_normalize(v);
 	}
 	normal = Vec_orthogonal(face);

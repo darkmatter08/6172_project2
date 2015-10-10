@@ -184,10 +184,9 @@ void delete_Quadtree(Quadtree * tree) {
 }
 
 // line is not in tree
-unsigned int detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList) {
+void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList_reducer * X) {
 	assert(tree);
 
-	unsigned int numCollisions = 0;
 	// do intersection detection at root of quadtree
 	for (int i = 0; i < tree->numOfLines; i++) {
 		Line * l1 = tree->lines[i];
@@ -201,8 +200,8 @@ unsigned int detect_collisions_recursive(Line * line, Quadtree * tree, Collision
 
 		IntersectionType intersectionType = intersect(l1, l2, collisionWorld->timeStep);
 		if (intersectionType != NO_INTERSECTION) {
-			IntersectionEventList_appendNode(intersectionEventList, l1, l2, intersectionType);
-			numCollisions++;
+			IntersectionEventList_appendNode(&REDUCER_VIEW(*X), l1, l2, intersectionType);
+			// collisionWorld->numLineLineCollisions++;
 		}
 	}
 
@@ -212,20 +211,26 @@ unsigned int detect_collisions_recursive(Line * line, Quadtree * tree, Collision
 		assert(tree->quadrant_3);
 		assert(tree->quadrant_4);
 
-		numCollisions += detect_collisions_recursive(line, tree->quadrant_1, collisionWorld, intersectionEventList);
-		numCollisions += detect_collisions_recursive(line, tree->quadrant_2, collisionWorld, intersectionEventList);
-		numCollisions += detect_collisions_recursive(line, tree->quadrant_3, collisionWorld, intersectionEventList);
-		numCollisions += detect_collisions_recursive(line, tree->quadrant_4, collisionWorld, intersectionEventList);
+		detect_collisions_recursive(line, tree->quadrant_1, collisionWorld, X);
+		detect_collisions_recursive(line, tree->quadrant_2, collisionWorld, X);
+		detect_collisions_recursive(line, tree->quadrant_3, collisionWorld, X);
+		detect_collisions_recursive(line, tree->quadrant_4, collisionWorld, X);
 	}
-	return numCollisions;
 }
 
-unsigned int detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList * intersectionEventList) {
+void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList_reducer * X) {
 	assert(tree);
 
-	unsigned int numCollisions = 0;
+	// IntersectionEventList_reducer X = CILK_C_INIT_REDUCER(
+	// 	/* type */ IntersectionEventList, IntersectionEventList_reduce, 
+	// 	IntersectionEventList_identity, IntersectionEventList_destroy,
+	// 	/* initial value */ (IntersectionEventList) { .head = NULL, .tail = NULL }
+	// );
+
+	// CILK_C_REGISTER_REDUCER(X);
+
 	// check everything at the root
-	for (int i = 0; i < tree->numOfLines; i++) {
+	cilk_for (int i = 0; i < tree->numOfLines; i++) {
 		for (int j = i + 1; j < tree->numOfLines; j++) {
 			Line * l1 = tree->lines[i];
 			Line * l2 = tree->lines[j];
@@ -238,8 +243,8 @@ unsigned int detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld,
 
 			IntersectionType intersectionType = intersect(l1, l2, collisionWorld->timeStep);
 			if (intersectionType != NO_INTERSECTION) {
-				IntersectionEventList_appendNode(intersectionEventList, l1, l2, intersectionType);
-				numCollisions++;
+				IntersectionEventList_appendNode(&REDUCER_VIEW(*X), l1, l2, intersectionType);
+				// collisionWorld->numLineLineCollisions++;
 			}
 		}
 
@@ -248,10 +253,10 @@ unsigned int detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld,
 			assert(tree->quadrant_3);
 			assert(tree->quadrant_4);
 
-			numCollisions += detect_collisions_recursive(tree->lines[i], tree->quadrant_1, collisionWorld, intersectionEventList);
-			numCollisions += detect_collisions_recursive(tree->lines[i], tree->quadrant_2, collisionWorld, intersectionEventList);
-			numCollisions += detect_collisions_recursive(tree->lines[i], tree->quadrant_3, collisionWorld, intersectionEventList);
-			numCollisions += detect_collisions_recursive(tree->lines[i], tree->quadrant_4, collisionWorld, intersectionEventList);
+			detect_collisions_recursive(tree->lines[i], tree->quadrant_1, collisionWorld, X);
+			detect_collisions_recursive(tree->lines[i], tree->quadrant_2, collisionWorld, X);
+			detect_collisions_recursive(tree->lines[i], tree->quadrant_3, collisionWorld, X);
+			detect_collisions_recursive(tree->lines[i], tree->quadrant_4, collisionWorld, X);
 		}
 	}
 
@@ -261,10 +266,14 @@ unsigned int detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld,
 		assert(tree->quadrant_3);
 		assert(tree->quadrant_4);
 
-		numCollisions += detect_collisions(tree->quadrant_1, collisionWorld, intersectionEventList);
-		numCollisions += detect_collisions(tree->quadrant_2, collisionWorld, intersectionEventList);
-		numCollisions += detect_collisions(tree->quadrant_3, collisionWorld, intersectionEventList);
-		numCollisions += detect_collisions(tree->quadrant_4, collisionWorld, intersectionEventList);
+		// cilk_spawn here
+		detect_collisions(tree->quadrant_1, collisionWorld, X);
+		detect_collisions(tree->quadrant_2, collisionWorld, X);
+		detect_collisions(tree->quadrant_3, collisionWorld, X);
+		detect_collisions(tree->quadrant_4, collisionWorld, X);
 	}
-	return numCollisions;
+
+	// *intersectionEventList_return = X.value;
+
+	// CILK_C_UNREGISTER_REDUCER(X);
 }
