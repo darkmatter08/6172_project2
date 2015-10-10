@@ -267,10 +267,12 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 		assert(tree->quadrant_4);
 
 		// cilk_spawn here
-		detect_collisions(tree->quadrant_1, collisionWorld, X);
-		detect_collisions(tree->quadrant_2, collisionWorld, X);
-		detect_collisions(tree->quadrant_3, collisionWorld, X);
+		cilk_spawn detect_collisions(tree->quadrant_1, collisionWorld, X);
+		cilk_spawn detect_collisions(tree->quadrant_2, collisionWorld, X);
+		cilk_spawn detect_collisions(tree->quadrant_3, collisionWorld, X);
 		detect_collisions(tree->quadrant_4, collisionWorld, X);
+
+		cilk_sync;
 	}
 
 	// *intersectionEventList_return = X.value;
