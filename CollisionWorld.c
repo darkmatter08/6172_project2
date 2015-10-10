@@ -242,8 +242,8 @@ void CollisionWorld_collisionSolver(CollisionWorld* collisionWorld,
 	double v2Normal = Vec_dotProduct(l2->velocity, normal);
 
 	// Compute the mass of each line (we simply use its length).
-	double m1 = Vec_length(Vec_subtract(l1->p1, l1->p2));
-	double m2 = Vec_length(Vec_subtract(l2->p1, l2->p2));
+	double m1 = Vec_length(l1->relative_vector);
+	double m2 = Vec_length(l2->relative_vector);
 
 	// Perform the collision calculation (computes the new velocities along
 	// the direction normal to the collision face such that momentum and
