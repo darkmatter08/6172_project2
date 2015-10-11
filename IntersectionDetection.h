@@ -20,11 +20,15 @@
  * SOFTWARE.
  **/
 
+#include <assert.h>
+#include "./Line.h"
+#include "./Vec.h"
+
 #ifndef INTERSECTIONDETECTION_H_
 #define INTERSECTIONDETECTION_H_
 
-#include "./Line.h"
-#include "./Vec.h"
+#define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
+#define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 
 typedef enum {
   NO_INTERSECTION,
