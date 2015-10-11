@@ -122,9 +122,6 @@ void reassign_current_to_quadrants(Quadtree * tree) {
 		tree->lines[i] = NULL; // use memset or some other way?
 	}
 	tree->numOfLines = 0;
-	// tree->lines = {0};
-	// memset(tree->lines, NULL);
-	// assert(tree->numOfLines === 0);
 	for (int i = 0; i < current_numOfLines; i++) {
 		// Other strategies:
 		// 1) pop before insert, shifting
@@ -201,7 +198,6 @@ void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * 
 		IntersectionType intersectionType = intersect(l1, l2, collisionWorld->timeStep);
 		if (intersectionType != NO_INTERSECTION) {
 			IntersectionEventList_appendNode(&REDUCER_VIEW(*X), l1, l2, intersectionType);
-			// collisionWorld->numLineLineCollisions++;
 		}
 	}
 
@@ -220,14 +216,6 @@ void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * 
 
 void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList_reducer * X) {
 	assert(tree);
-
-	// IntersectionEventList_reducer X = CILK_C_INIT_REDUCER(
-	// 	/* type */ IntersectionEventList, IntersectionEventList_reduce, 
-	// 	IntersectionEventList_identity, IntersectionEventList_destroy,
-	// 	/* initial value */ (IntersectionEventList) { .head = NULL, .tail = NULL }
-	// );
-
-	// CILK_C_REGISTER_REDUCER(X);
 
 	// if children exist, do this recursively
 	if (tree->quadrant_1) {
@@ -259,7 +247,6 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 			IntersectionType intersectionType = intersect(l1, l2, collisionWorld->timeStep);
 			if (intersectionType != NO_INTERSECTION) {
 				IntersectionEventList_appendNode(&REDUCER_VIEW(*X), l1, l2, intersectionType);
-				// collisionWorld->numLineLineCollisions++;
 			}
 		}
 
@@ -274,8 +261,4 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 			detect_collisions_recursive(tree->lines[i], tree->quadrant_4, collisionWorld, X);
 		}
 	}
-
-	// *intersectionEventList_return = X.value;
-
-	// CILK_C_UNREGISTER_REDUCER(X);
 }
