@@ -22,8 +22,6 @@
 
 #include "./IntersectionDetection.h"
 
-#include <assert.h>
-
 // Detect if lines l1 and l2 will intersect between now and the next time step.
 IntersectionType intersect(Line *l1, Line *l2, double time) {
   assert(compareLines(l1, l2) < 0);

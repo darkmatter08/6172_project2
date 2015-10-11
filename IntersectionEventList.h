@@ -23,6 +23,8 @@
 #ifndef INTERSECTIONEVENTLIST_H_
 #define INTERSECTIONEVENTLIST_H_
 
+#include <assert.h>
+#include <stdlib.h>
 #include "./Line.h"
 #include "./IntersectionDetection.h"
 

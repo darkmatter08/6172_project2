@@ -22,9 +22,6 @@
 
 #include "./IntersectionEventList.h"
 
-#include <assert.h>
-#include <stdlib.h>
-
 int IntersectionEventNode_compareData(IntersectionEventNode* node1,
                                       IntersectionEventNode* node2) {
   if (compareLines(node1->l1, node2->l1) < 0) {
