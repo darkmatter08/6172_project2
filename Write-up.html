@@ -1,0 +1,1291 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body {
+  width: 45em;
+  border: 1px solid #ddd;
+  outline: 1300px solid #fff;
+  margin: 16px auto;
+}
+
+body .markdown-body
+{
+  padding: 30px;
+}
+
+@font-face {
+  font-family: octicons-anchor;
+  src: url(data:font/woff;charset=utf-8;base64,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) format('woff');
+}
+
+.markdown-body {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  color: #333;
+  overflow: hidden;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+.markdown-body a {
+  background: transparent;
+}
+
+.markdown-body a:active,
+.markdown-body a:hover {
+  outline: 0;
+}
+
+.markdown-body strong {
+  font-weight: bold;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+.markdown-body img {
+  border: 0;
+}
+
+.markdown-body hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+
+.markdown-body pre {
+  overflow: auto;
+}
+
+.markdown-body code,
+.markdown-body kbd,
+.markdown-body pre {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+
+.markdown-body input {
+  color: inherit;
+  font: inherit;
+  margin: 0;
+}
+
+.markdown-body html input[disabled] {
+  cursor: default;
+}
+
+.markdown-body input {
+  line-height: normal;
+}
+
+.markdown-body input[type="checkbox"] {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.markdown-body td,
+.markdown-body th {
+  padding: 0;
+}
+
+.markdown-body * {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.markdown-body input {
+  font: 13px/1.4 Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.markdown-body a {
+  color: #4183c4;
+  text-decoration: none;
+}
+
+.markdown-body a:hover,
+.markdown-body a:focus,
+.markdown-body a:active {
+  text-decoration: underline;
+}
+
+.markdown-body hr {
+  height: 0;
+  margin: 15px 0;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.markdown-body hr:before {
+  display: table;
+  content: "";
+}
+
+.markdown-body hr:after {
+  display: table;
+  clear: both;
+  content: "";
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  line-height: 1.1;
+}
+
+.markdown-body h1 {
+  font-size: 30px;
+}
+
+.markdown-body h2 {
+  font-size: 21px;
+}
+
+.markdown-body h3 {
+  font-size: 16px;
+}
+
+.markdown-body h4 {
+  font-size: 14px;
+}
+
+.markdown-body h5 {
+  font-size: 12px;
+}
+
+.markdown-body h6 {
+  font-size: 11px;
+}
+
+.markdown-body blockquote {
+  margin: 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body ol ol,
+.markdown-body ul ol {
+  list-style-type: lower-roman;
+}
+
+.markdown-body ul ul ol,
+.markdown-body ul ol ol,
+.markdown-body ol ul ol,
+.markdown-body ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-body dd {
+  margin-left: 0;
+}
+
+.markdown-body code {
+  font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+.markdown-body pre {
+  margin-top: 0;
+  margin-bottom: 0;
+  font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+.markdown-body .octicon {
+  font: normal normal 16px octicons-anchor;
+  line-height: 1;
+  display: inline-block;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.markdown-body .octicon-link:before {
+  content: '\f05c';
+}
+
+.markdown-body>*:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+.markdown-body .anchor {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  padding-right: 6px;
+  padding-left: 30px;
+  margin-left: -30px;
+}
+
+.markdown-body .anchor:focus {
+  outline: none;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  position: relative;
+  margin-top: 1em;
+  margin-bottom: 16px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.markdown-body h1 .octicon-link,
+.markdown-body h2 .octicon-link,
+.markdown-body h3 .octicon-link,
+.markdown-body h4 .octicon-link,
+.markdown-body h5 .octicon-link,
+.markdown-body h6 .octicon-link {
+  display: none;
+  color: #000;
+  vertical-align: middle;
+}
+
+.markdown-body h1:hover .anchor,
+.markdown-body h2:hover .anchor,
+.markdown-body h3:hover .anchor,
+.markdown-body h4:hover .anchor,
+.markdown-body h5:hover .anchor,
+.markdown-body h6:hover .anchor {
+  padding-left: 8px;
+  margin-left: -30px;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.markdown-body h1:hover .anchor .octicon-link,
+.markdown-body h2:hover .anchor .octicon-link,
+.markdown-body h3:hover .anchor .octicon-link,
+.markdown-body h4:hover .anchor .octicon-link,
+.markdown-body h5:hover .anchor .octicon-link,
+.markdown-body h6:hover .anchor .octicon-link {
+  display: inline-block;
+}
+
+.markdown-body h1 {
+  padding-bottom: 0.3em;
+  font-size: 2.25em;
+  line-height: 1.2;
+  border-bottom: 1px solid #eee;
+}
+
+.markdown-body h2 {
+  padding-bottom: 0.3em;
+  font-size: 1.75em;
+  line-height: 1.225;
+  border-bottom: 1px solid #eee;
+}
+
+.markdown-body h3 {
+  font-size: 1.5em;
+  line-height: 1.43;
+}
+
+.markdown-body h4 {
+  font-size: 1.25em;
+}
+
+.markdown-body h5 {
+  font-size: 1em;
+}
+
+.markdown-body h6 {
+  font-size: 1em;
+  color: #777;
+}
+
+.markdown-body p,
+.markdown-body blockquote,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body dl,
+.markdown-body table,
+.markdown-body pre {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.markdown-body hr {
+  height: 4px;
+  padding: 0;
+  margin: 16px 0;
+  background-color: #e7e7e7;
+  border: 0 none;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 2em;
+}
+
+.markdown-body ul ul,
+.markdown-body ul ol,
+.markdown-body ol ol,
+.markdown-body ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body li>p {
+  margin-top: 16px;
+}
+
+.markdown-body dl {
+  padding: 0;
+}
+
+.markdown-body dl dt {
+  padding: 0;
+  margin-top: 16px;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: bold;
+}
+
+.markdown-body dl dd {
+  padding: 0 16px;
+  margin-bottom: 16px;
+}
+
+.markdown-body blockquote {
+  padding: 0 15px;
+  color: #777;
+  border-left: 4px solid #ddd;
+}
+
+.markdown-body blockquote>:first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+}
+
+.markdown-body table th {
+  font-weight: bold;
+}
+
+.markdown-body table th,
+.markdown-body table td {
+  padding: 6px 13px;
+  border: 1px solid #ddd;
+}
+
+.markdown-body table tr {
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.markdown-body code {
+  padding: 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(0,0,0,0.04);
+  border-radius: 3px;
+}
+
+.markdown-body code:before,
+.markdown-body code:after {
+  letter-spacing: -0.2em;
+  content: "\00a0";
+}
+
+.markdown-body pre>code {
+  padding: 0;
+  margin: 0;
+  font-size: 100%;
+  word-break: normal;
+  white-space: pre;
+  background: transparent;
+  border: 0;
+}
+
+.markdown-body .highlight {
+  margin-bottom: 16px;
+}
+
+.markdown-body .highlight pre,
+.markdown-body pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f7f7;
+  border-radius: 3px;
+}
+
+.markdown-body .highlight pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+
+.markdown-body pre {
+  word-wrap: normal;
+}
+
+.markdown-body pre code {
+  display: inline;
+  max-width: initial;
+  padding: 0;
+  margin: 0;
+  overflow: initial;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+}
+
+.markdown-body pre code:before,
+.markdown-body pre code:after {
+  content: normal;
+}
+
+.markdown-body .highlight {
+  background: #fff;
+}
+
+.markdown-body .highlight .h {
+  color: #333;
+  font-style: normal;
+  font-weight: normal;
+}
+
+.markdown-body .highlight .mf,
+.markdown-body .highlight .mh,
+.markdown-body .highlight .mi,
+.markdown-body .highlight .mo,
+.markdown-body .highlight .il,
+.markdown-body .highlight .m {
+  color: #945277;
+}
+
+.markdown-body .highlight .s,
+.markdown-body .highlight .sb,
+.markdown-body .highlight .sc,
+.markdown-body .highlight .sd,
+.markdown-body .highlight .s2,
+.markdown-body .highlight .se,
+.markdown-body .highlight .sh,
+.markdown-body .highlight .si,
+.markdown-body .highlight .sx,
+.markdown-body .highlight .s1 {
+  color: #df5000;
+}
+
+.markdown-body .highlight .kc,
+.markdown-body .highlight .kd,
+.markdown-body .highlight .kn,
+.markdown-body .highlight .kp,
+.markdown-body .highlight .kr,
+.markdown-body .highlight .kt,
+.markdown-body .highlight .k,
+.markdown-body .highlight .o {
+  font-weight: bold;
+}
+
+.markdown-body .highlight .kt {
+  color: #458;
+}
+
+.markdown-body .highlight .c,
+.markdown-body .highlight .cm,
+.markdown-body .highlight .c1 {
+  color: #998;
+  font-style: italic;
+}
+
+.markdown-body .highlight .cp,
+.markdown-body .highlight .cs,
+.markdown-body .highlight .cp .h {
+  color: #999;
+  font-weight: bold;
+}
+
+.markdown-body .highlight .cs {
+  font-style: italic;
+}
+
+.markdown-body .highlight .n {
+  color: #333;
+}
+
+.markdown-body .highlight .na,
+.markdown-body .highlight .nv,
+.markdown-body .highlight .vc,
+.markdown-body .highlight .vg,
+.markdown-body .highlight .vi {
+  color: #008080;
+}
+
+.markdown-body .highlight .nb {
+  color: #0086B3;
+}
+
+.markdown-body .highlight .nc {
+  color: #458;
+  font-weight: bold;
+}
+
+.markdown-body .highlight .no {
+  color: #094e99;
+}
+
+.markdown-body .highlight .ni {
+  color: #800080;
+}
+
+.markdown-body .highlight .ne {
+  color: #990000;
+  font-weight: bold;
+}
+
+.markdown-body .highlight .nf {
+  color: #945277;
+  font-weight: bold;
+}
+
+.markdown-body .highlight .nn {
+  color: #555;
+}
+
+.markdown-body .highlight .nt {
+  color: #000080;
+}
+
+.markdown-body .highlight .err {
+  color: #a61717;
+  background-color: #e3d2d2;
+}
+
+.markdown-body .highlight .gd {
+  color: #000;
+  background-color: #fdd;
+}
+
+.markdown-body .highlight .gd .x {
+  color: #000;
+  background-color: #faa;
+}
+
+.markdown-body .highlight .ge {
+  font-style: italic;
+}
+
+.markdown-body .highlight .gr {
+  color: #aa0000;
+}
+
+.markdown-body .highlight .gh {
+  color: #999;
+}
+
+.markdown-body .highlight .gi {
+  color: #000;
+  background-color: #dfd;
+}
+
+.markdown-body .highlight .gi .x {
+  color: #000;
+  background-color: #afa;
+}
+
+.markdown-body .highlight .go {
+  color: #888;
+}
+
+.markdown-body .highlight .gp {
+  color: #555;
+}
+
+.markdown-body .highlight .gs {
+  font-weight: bold;
+}
+
+.markdown-body .highlight .gu {
+  color: #800080;
+  font-weight: bold;
+}
+
+.markdown-body .highlight .gt {
+  color: #aa0000;
+}
+
+.markdown-body .highlight .ow {
+  font-weight: bold;
+}
+
+.markdown-body .highlight .w {
+  color: #bbb;
+}
+
+.markdown-body .highlight .sr {
+  color: #017936;
+}
+
+.markdown-body .highlight .ss {
+  color: #8b467f;
+}
+
+.markdown-body .highlight .bp {
+  color: #999;
+}
+
+.markdown-body .highlight .gc {
+  color: #999;
+  background-color: #EAF2F5;
+}
+
+.markdown-body kbd {
+  background-color: #e7e7e7;
+  background-image: -webkit-linear-gradient(#fefefe, #e7e7e7);
+  background-image: linear-gradient(#fefefe, #e7e7e7);
+  background-repeat: repeat-x;
+  display: inline-block;
+  padding: 3px 5px;
+  font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  line-height: 10px;
+  color: #000;
+  border: 1px solid #cfcfcf;
+  border-radius: 2px;
+}
+
+.markdown-body .highlight .pl-coc,
+.markdown-body .highlight .pl-entm,
+.markdown-body .highlight .pl-eoa,
+.markdown-body .highlight .pl-mai .pl-sf,
+.markdown-body .highlight .pl-pdv,
+.markdown-body .highlight .pl-sc,
+.markdown-body .highlight .pl-sr,
+.markdown-body .highlight .pl-v,
+.markdown-body .highlight .pl-vpf {
+  color: #0086b3;
+}
+
+.markdown-body .highlight .pl-eoac,
+.markdown-body .highlight .pl-mdht,
+.markdown-body .highlight .pl-mi1,
+.markdown-body .highlight .pl-mri,
+.markdown-body .highlight .pl-va,
+.markdown-body .highlight .pl-vpu {
+  color: #008080;
+}
+
+.markdown-body .highlight .pl-c,
+.markdown-body .highlight .pl-pdc {
+  color: #b4b7b4;
+  font-style: italic;
+}
+
+.markdown-body .highlight .pl-k,
+.markdown-body .highlight .pl-ko,
+.markdown-body .highlight .pl-kolp,
+.markdown-body .highlight .pl-mc,
+.markdown-body .highlight .pl-mr,
+.markdown-body .highlight .pl-ms,
+.markdown-body .highlight .pl-s,
+.markdown-body .highlight .pl-sok,
+.markdown-body .highlight .pl-st {
+  color: #6e5494;
+}
+
+.markdown-body .highlight .pl-ef,
+.markdown-body .highlight .pl-enf,
+.markdown-body .highlight .pl-enm,
+.markdown-body .highlight .pl-entc,
+.markdown-body .highlight .pl-eoi,
+.markdown-body .highlight .pl-sf,
+.markdown-body .highlight .pl-smc {
+  color: #d12089;
+}
+
+.markdown-body .highlight .pl-ens,
+.markdown-body .highlight .pl-eoai,
+.markdown-body .highlight .pl-kos,
+.markdown-body .highlight .pl-mh .pl-pdh,
+.markdown-body .highlight .pl-mp,
+.markdown-body .highlight .pl-pde,
+.markdown-body .highlight .pl-stp {
+  color: #458;
+}
+
+.markdown-body .highlight .pl-enti {
+  color: #d12089;
+  font-weight: bold;
+}
+
+.markdown-body .highlight .pl-cce,
+.markdown-body .highlight .pl-enc,
+.markdown-body .highlight .pl-kou,
+.markdown-body .highlight .pl-mq {
+  color: #f93;
+}
+
+.markdown-body .highlight .pl-mp1 .pl-sf {
+  color: #458;
+  font-weight: bold;
+}
+
+.markdown-body .highlight .pl-cos,
+.markdown-body .highlight .pl-ent,
+.markdown-body .highlight .pl-md,
+.markdown-body .highlight .pl-mdhf,
+.markdown-body .highlight .pl-ml,
+.markdown-body .highlight .pl-pdc1,
+.markdown-body .highlight .pl-pds,
+.markdown-body .highlight .pl-s1,
+.markdown-body .highlight .pl-scp,
+.markdown-body .highlight .pl-sol {
+  color: #df5000;
+}
+
+.markdown-body .highlight .pl-c1,
+.markdown-body .highlight .pl-cn,
+.markdown-body .highlight .pl-pse,
+.markdown-body .highlight .pl-pse .pl-s2,
+.markdown-body .highlight .pl-vi {
+  color: #a31515;
+}
+
+.markdown-body .highlight .pl-mb,
+.markdown-body .highlight .pl-pdb {
+  color: #df5000;
+  font-weight: bold;
+}
+
+.markdown-body .highlight .pl-mi,
+.markdown-body .highlight .pl-pdi {
+  color: #6e5494;
+  font-style: italic;
+}
+
+.markdown-body .highlight .pl-ms1 {
+  background-color: #f5f5f5;
+}
+
+.markdown-body .highlight .pl-mdh,
+.markdown-body .highlight .pl-mdi {
+  font-weight: bold;
+}
+
+.markdown-body .highlight .pl-mdr {
+  color: #0086b3;
+  font-weight: bold;
+}
+
+.markdown-body .highlight .pl-s2 {
+  color: #333;
+}
+
+.markdown-body .highlight .pl-ii {
+  background-color: #df5000;
+  color: #fff;
+}
+
+.markdown-body .highlight .pl-ib {
+  background-color: #f93;
+}
+
+.markdown-body .highlight .pl-id {
+  background-color: #a31515;
+  color: #fff;
+}
+
+.markdown-body .highlight .pl-iu {
+  background-color: #b4b7b4;
+}
+
+.markdown-body .highlight .pl-mo {
+  color: #969896;
+}
+
+.markdown-body .task-list-item {
+  list-style-type: none;
+}
+
+.markdown-body .task-list-item+.task-list-item {
+  margin-top: 3px;
+}
+
+.markdown-body .task-list-item input {
+  float: left;
+  margin: 0.3em 0 0.25em -1.6em;
+  vertical-align: middle;
+}</style><title>Write-up</title></head><body><article class="markdown-body"><h1>
+<a id="user-content-collision-detection" class="anchor" href="#collision-detection" aria-hidden="true"><span class="octicon octicon-link"></span></a>Collision Detection</h1>
+
+<h2>
+<a id="user-content-shantanu-jain--david-wong" class="anchor" href="#shantanu-jain--david-wong" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shantanu Jain &amp; David Wong</h2>
+
+<h3>
+<a id="user-content-write-up-1" class="anchor" href="#write-up-1" aria-hidden="true"><span class="octicon octicon-link"></span></a>Write-up 1</h3>
+
+<pre><code>$ awsrun ./Screensaver 2500
+
+==== Standard Output ====
+Number of frames = 2500
+---- RESULTS ----
+Elapsed execution time: 59.53s
+720 Line-Wall Collisions
+11053 Line-Line Collisions
+---- END RESULTS ----
+</code></pre>
+
+<h3>
+<a id="user-content-write-up-2" class="anchor" href="#write-up-2" aria-hidden="true"><span class="octicon octicon-link"></span></a>Write-up 2</h3>
+
+<p>Not all line segments need to be stored in leaf notes. If a line <em>spans</em> quadrants, meaning it crosses the boundaries of a quadtree's quadrants, then it can be stored in the smallest quadtree that can contain it. When detecting for collisions, this would mean that any lines stored in a non-leaf node must be checked for collisions against all lines in the subtree, making it less efficient, but only for spanning lines. However the quadtree will still be much more efficient than the current naieve implementation.</p>
+
+<h3>
+<a id="user-content-write-up-3" class="anchor" href="#write-up-3" aria-hidden="true"><span class="octicon octicon-link"></span></a>Write-up 3</h3>
+
+<pre><code>$ awsrun ./Screensaver 4000
+
+1262 Line-Wall Collisions
+19806 Line-Line Collisions
+
+</code></pre>
+
+<h3>
+<a id="user-content-write-up-4" class="anchor" href="#write-up-4" aria-hidden="true"><span class="octicon octicon-link"></span></a>Write-up 4</h3>
+
+<p>We got a good speedup with an unoptimized quadtree implementation. While we were not able to run the original code with awsrun because it timed out, here we were able to run with all 4000 frames. We estimate about a 5x speedup. </p>
+
+<pre><code>Submitting Job: ./Screensaver 4000
+Waiting for job to finish...
+
+==== Standard Output ====
+Number of frames = 4000
+---- RESULTS ----
+Elapsed execution time: 20.1s
+1262 Line-Wall Collisions
+19806 Line-Line Collisions
+---- END RESULTS ----
+</code></pre>
+
+<h3>
+<a id="user-content-write-up-5" class="anchor" href="#write-up-5" aria-hidden="true"><span class="octicon octicon-link"></span></a>Write-up 5</h3>
+
+<p>The quadtree was implemented as a struct that held pointers to 4 other quadtrees that served as the quadtree's children. We assigned the quadtrees's quadrant numbers in the same style as a standard cartesian coordinate plain. If there was a spanning line, then that line was stored in the smallest quadrant that fit it - in other words, as deep in the tree as possible, given the constraint that any lines in that node must fit entirely within that node. We modified the CollisionWorld_detectIntersection method to use the quadtrees. Since it is invoked at every time step to build a list of collisions, at each time step, it parses the current CollisionWorld to a quadtree, calls <code>detect_collisions()</code> to build an IntersectionEventList and then deletes the quadtree. </p>
+
+<p><code>Quadtree.c:detect_collisions()</code> checks for collisions in a valid quadtree. Recognizing that at the leaves of the quadtree, intersections can only occur within the lines of a leaf node. For spanning lines (those not at a leaf), all lines in the subtree of the node it hangs from must be checked for collisions. <code>detect_collisions_recursive()</code> receives a line and a subtree, and recursively checks for intersections. <code>detect_collisions()</code> checks the whole treee for collisions and builds an IntersectionEventList. </p>
+
+<h3>
+<a id="user-content-write-up-6" class="anchor" href="#write-up-6" aria-hidden="true"><span class="octicon octicon-link"></span></a>Write-up 6</h3>
+
+<p>We varied the value of <code>N</code> and found the best value to be 24. We improved by nearly 2.5 seconds with this improvement.</p>
+
+<h3>
+<a id="user-content-write-up-7" class="anchor" href="#write-up-7" aria-hidden="true"><span class="octicon octicon-link"></span></a>Write-up 7</h3>
+
+<p>Other optimizations tested:</p>
+
+<ul>
+<li><p>Implemented a maximum depth for the tree. This basically has the effect of coarsening the Quadtree recursion. Surprisingly, we saw that there were almost no lines at the leaves -- instead the deepeest lines generally were placed in the tree was depth 3 (where the root has a depth of 0). We saw very slight speedups (less than 10%) although we are not sure why, when we set this number to be large, i.e. 24, instead of values like 12 or 9, even though we verified we never reached the max recursion depth. </p></li>
+<li><p>Inlined the intersect() method. We did this after we parallelized. Surprisingly, we got about a 12% speedup (3.26s to 2.85s). We were not expecting this, given that we thought the compiler with -O3 would aggressively inline itself. </p></li>
+<li><p>Precomputed the 'relative vector' that was computed at every call of <code>CollisionWorld_collisionSolver()</code>, at the time the line was constructed (<code>LineDemo.c</code>) via the <code>Vec_makeFromLine()</code> method. </p></li>
+<li><p>Precomputed the length of the 'relative vector' that was computed at every call of CollisionWorld_collisionSolver() via the <code>Vec_length()</code> method. </p></li>
+<li><p>We decided not to attempt updating the quadtree, as the time spent allocing, parsing the CollisionWorld into a quadtree, and deallocing, was very small compared to the time spent in the intersect() method. However, accessing and copying the lines into the quadtree is a substantial amount of memory accesses. When we ran valgrind and cachegrind, we saw that our data and instruction miss rate was essentially 0%, suggesting that the entire data structure and the CollisionWorld is all sitting in cache. </p></li>
+</ul>
+
+<h3>
+<a id="user-content-write-up-8" class="anchor" href="#write-up-8" aria-hidden="true"><span class="octicon octicon-link"></span></a>Write-up 8</h3>
+
+<p>gprof outout </p>
+
+<pre><code>  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  us/call  us/call  name    
+ 31.53      2.84     2.84 98049242     0.03     0.09  intersect
+ 26.04      5.19     2.35 294147552     0.01     0.01  intersectLines
+ 17.43      6.76     1.57 197726432     0.01     0.01  Vec_multiply
+ 11.77      7.82     1.06 197722238     0.01     0.01  Vec_add
+  6.77      8.43     0.61 98053726     0.01     0.01  Vec_subtract
+  5.27      8.90     0.48                             detect_collisions_recursive
+</code></pre>
+
+<p>(after parallelization)</p>
+
+<h3>
+<a id="user-content-write-up-9" class="anchor" href="#write-up-9" aria-hidden="true"><span class="octicon octicon-link"></span></a>Write-up 9</h3>
+
+<p>A reducer for the InteresectionEventList was implemented (see <code>IntersectionEventListReducer.c</code>). The collisionWorld-&gt;numLineLineCollisions value was updated in a serial portion of the code to avoid using the opadd reducer. This was accomplished by adding an unsigned int size member to the IntersectionEventList struct (linked list). This made the LinkedList essentially identical (besides semantics) to the one implemented in Queens in homework 4.</p>
+
+<p>The reducer was registered/unregistered in <code>CollisionWorld.c:CollisionWorld_detectIntersection()</code> and passed into the <code>detect_collisions()</code> method. This method used <code>REDUCER_VIEW()</code> in order to gain access to the underlying IntersectionEventList, and passed the reducer into the <code>detect_collisions_recursive()</code> method.</p>
+
+<h3>
+<a id="user-content-appendix" class="anchor" href="#appendix" aria-hidden="true"><span class="octicon octicon-link"></span></a>Appendix</h3>
+
+<p>Full gprof output after parallelization</p>
+
+<pre><code>jains@ip-172-31-52-91:/afs/athena.mit.edu/user/j/a/jains/Documents/6172/project2$ gprof ./Screensaver.prof 
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  us/call  us/call  name    
+ 31.53      2.84     2.84 98049242     0.03     0.09  intersect
+ 26.04      5.19     2.35 294147552     0.01     0.01  intersectLines
+ 17.43      6.76     1.57 197726432     0.01     0.01  Vec_multiply
+ 11.77      7.82     1.06 197722238     0.01     0.01  Vec_add
+  6.77      8.43     0.61 98053726     0.01     0.01  Vec_subtract
+  5.27      8.90     0.48                             detect_collisions_recursive
+  0.89      8.98     0.08   809809     0.10     0.10  insert_line
+  0.17      9.00     0.02                             pointInParallelogram
+  0.11      9.01     0.01     1001     9.99     9.99  CollisionWorld_lineWallCollision
+  0.06      9.01     0.01     1001     5.00     5.00  delete_Quadtree
+  0.00      9.01     0.00     8156     0.00     0.00  Vec_dotProduct
+  0.00      9.01     0.00     7764     0.00     0.00  IntersectionEventNode_compareData
+  0.00      9.01     0.00     4426     0.00     0.00  Vec_length
+  0.00      9.01     0.00     2155     0.00     0.00  Vec_normalize
+  0.00      9.01     0.00     2097     0.00     0.06  CollisionWorld_collisionSolver
+  0.00      9.01     0.00     2097     0.00     0.00  IntersectionEventList_appendNode
+  0.00      9.01     0.00     2039     0.00     0.00  Vec_orthogonal
+  0.00      9.01     0.00     1505     0.00     0.00  Vec_angle
+  0.00      9.01     0.00     1001     0.00    85.07  CollisionWorld_detectIntersection
+  0.00      9.01     0.00     1001     0.00   106.60  CollisionWorld_updateLines
+  0.00      9.01     0.00     1001     0.00     0.00  IntersectionEventList_deleteNodes
+  0.00      9.01     0.00     1001     0.00     0.00  IntersectionEventList_make
+  0.00      9.01     0.00     1001     0.00     0.00  detect_collisions
+  0.00      9.01     0.00     1001     0.00    79.95  parse_CollisionWorld_to_Quadtree
+  0.00      9.01     0.00      939     0.00     0.00  IntersectionEventNode_swapData
+  0.00      9.01     0.00      809     0.00     0.00  CollisionWorld_addLine
+  0.00      9.01     0.00      809     0.00     0.00  Vec_makeFromLine
+  0.00      9.01     0.00       58     0.00     0.02  getIntersectionPoint
+  0.00      9.01     0.00        1     0.00     0.00  CollisionWorld_delete
+  0.00      9.01     0.00        1     0.00     0.00  CollisionWorld_new
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+       else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+       function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+       the function in the gprof listing. If the index is
+       in parenthesis it shows where it would appear in
+       the gprof listing if it were to be printed.
+
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+
+             Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.11% of 9.01 seconds
+
+index % time    self  children    called     name
+                             4499064             detect_collisions_recursive [1]
+[1]     98.5    0.48    8.41       0+4499064 detect_collisions_recursive [1]
+                2.84    5.57 98049242/98049242     intersect [2]
+                0.00    0.00    2097/2097        IntersectionEventList_appendNode [21]
+                             4499064             detect_collisions_recursive [1]
+-----------------------------------------------
+                2.84    5.57 98049242/98049242     detect_collisions_recursive [1]
+[2]     93.3    2.84    5.57 98049242         intersect [2]
+                2.35    0.00 294147552/294147552     intersectLines [3]
+                1.56    0.00 196098484/197726432     Vec_multiply [4]
+                1.05    0.00 196098484/197722238     Vec_add [5]
+                0.61    0.00 98049242/98053726     Vec_subtract [6]
+                0.00    0.00    1505/1505        Vec_angle [23]
+-----------------------------------------------
+                2.35    0.00 294147552/294147552     intersect [2]
+[3]     26.0    2.35    0.00 294147552         intersectLines [3]
+-----------------------------------------------
+                0.00    0.00      58/197726432     getIntersectionPoint [16]
+                0.00    0.00    8272/197726432     CollisionWorld_collisionSolver [15]
+                0.01    0.00 1619618/197726432     CollisionWorld_updateLines [8]
+                1.56    0.00 196098484/197726432     intersect [2]
+[4]     17.4    1.57    0.00 197726432         Vec_multiply [4]
+-----------------------------------------------
+                0.00    0.00      58/197722238     getIntersectionPoint [16]
+                0.00    0.00    4078/197722238     CollisionWorld_collisionSolver [15]
+                0.01    0.00 1619618/197722238     CollisionWorld_updateLines [8]
+                1.05    0.00 196098484/197722238     intersect [2]
+[5]     11.8    1.06    0.00 197722238         Vec_add [5]
+-----------------------------------------------
+                0.00    0.00      58/98053726     getIntersectionPoint [16]
+                0.00    0.00    4426/98053726     CollisionWorld_collisionSolver [15]
+                0.61    0.00 98049242/98053726     intersect [2]
+[6]      6.8    0.61    0.00 98053726         Vec_subtract [6]
+-----------------------------------------------
+                                                 &lt;spontaneous&gt;
+[7]      1.3    0.00    0.12                 LineDemo_update [7]
+                0.00    0.11    1001/1001        CollisionWorld_updateLines [8]
+                0.01    0.00    1001/1001        CollisionWorld_lineWallCollision [13]
+-----------------------------------------------
+                0.00    0.11    1001/1001        LineDemo_update [7]
+[8]      1.2    0.00    0.11    1001         CollisionWorld_updateLines [8]
+                0.00    0.09    1001/1001        CollisionWorld_detectIntersection [9]
+                0.01    0.00 1619618/197726432     Vec_multiply [4]
+                0.01    0.00 1619618/197722238     Vec_add [5]
+-----------------------------------------------
+                0.00    0.09    1001/1001        CollisionWorld_updateLines [8]
+[9]      0.9    0.00    0.09    1001         CollisionWorld_detectIntersection [9]
+                0.00    0.08    1001/1001        parse_CollisionWorld_to_Quadtree [11]
+                0.01    0.00    1001/1001        delete_Quadtree [14]
+                0.00    0.00    2097/2097        CollisionWorld_collisionSolver [15]
+                0.00    0.00    7764/7764        IntersectionEventNode_compareData [18]
+                0.00    0.00    1001/1001        IntersectionEventList_make [25]
+                0.00    0.00    1001/1001        detect_collisions [26]
+                0.00    0.00    1001/1001        IntersectionEventList_deleteNodes [24]
+                0.00    0.00     939/939         IntersectionEventNode_swapData [27]
+-----------------------------------------------
+                              291480             insert_line [10]
+                0.08    0.00  809809/809809      parse_CollisionWorld_to_Quadtree [11]
+[10]     0.9    0.08    0.00  809809+291480  insert_line [10]
+                              291480             insert_line [10]
+-----------------------------------------------
+                0.00    0.08    1001/1001        CollisionWorld_detectIntersection [9]
+[11]     0.9    0.00    0.08    1001         parse_CollisionWorld_to_Quadtree [11]
+                0.08    0.00  809809/809809      insert_line [10]
+-----------------------------------------------
+                                                 &lt;spontaneous&gt;
+[12]     0.2    0.02    0.00                 pointInParallelogram [12]
+-----------------------------------------------
+                0.01    0.00    1001/1001        LineDemo_update [7]
+[13]     0.1    0.01    0.00    1001         CollisionWorld_lineWallCollision [13]
+-----------------------------------------------
+                               23796             delete_Quadtree [14]
+                0.01    0.00    1001/1001        CollisionWorld_detectIntersection [9]
+[14]     0.1    0.01    0.00    1001+23796   delete_Quadtree [14]
+                               23796             delete_Quadtree [14]
+-----------------------------------------------
+                0.00    0.00    2097/2097        CollisionWorld_detectIntersection [9]
+[15]     0.0    0.00    0.00    2097         CollisionWorld_collisionSolver [15]
+                0.00    0.00    8272/197726432     Vec_multiply [4]
+                0.00    0.00    4426/98053726     Vec_subtract [6]
+                0.00    0.00    4078/197722238     Vec_add [5]
+                0.00    0.00      58/58          getIntersectionPoint [16]
+                0.00    0.00    8156/8156        Vec_dotProduct [17]
+                0.00    0.00    4426/4426        Vec_length [19]
+                0.00    0.00    2155/2155        Vec_normalize [20]
+                0.00    0.00    2039/2039        Vec_orthogonal [22]
+-----------------------------------------------
+                0.00    0.00      58/58          CollisionWorld_collisionSolver [15]
+[16]     0.0    0.00    0.00      58         getIntersectionPoint [16]
+                0.00    0.00      58/197726432     Vec_multiply [4]
+                0.00    0.00      58/98053726     Vec_subtract [6]
+                0.00    0.00      58/197722238     Vec_add [5]
+-----------------------------------------------
+                0.00    0.00    8156/8156        CollisionWorld_collisionSolver [15]
+[17]     0.0    0.00    0.00    8156         Vec_dotProduct [17]
+-----------------------------------------------
+                0.00    0.00    7764/7764        CollisionWorld_detectIntersection [9]
+[18]     0.0    0.00    0.00    7764         IntersectionEventNode_compareData [18]
+-----------------------------------------------
+                0.00    0.00    4426/4426        CollisionWorld_collisionSolver [15]
+[19]     0.0    0.00    0.00    4426         Vec_length [19]
+-----------------------------------------------
+                0.00    0.00    2155/2155        CollisionWorld_collisionSolver [15]
+[20]     0.0    0.00    0.00    2155         Vec_normalize [20]
+-----------------------------------------------
+                0.00    0.00    2097/2097        detect_collisions_recursive [1]
+[21]     0.0    0.00    0.00    2097         IntersectionEventList_appendNode [21]
+-----------------------------------------------
+                0.00    0.00    2039/2039        CollisionWorld_collisionSolver [15]
+[22]     0.0    0.00    0.00    2039         Vec_orthogonal [22]
+-----------------------------------------------
+                0.00    0.00    1505/1505        intersect [2]
+[23]     0.0    0.00    0.00    1505         Vec_angle [23]
+-----------------------------------------------
+                0.00    0.00    1001/1001        CollisionWorld_detectIntersection [9]
+[24]     0.0    0.00    0.00    1001         IntersectionEventList_deleteNodes [24]
+-----------------------------------------------
+                0.00    0.00    1001/1001        CollisionWorld_detectIntersection [9]
+[25]     0.0    0.00    0.00    1001         IntersectionEventList_make [25]
+-----------------------------------------------
+                               85015             detect_collisions [26]
+                0.00    0.00    1001/1001        CollisionWorld_detectIntersection [9]
+[26]     0.0    0.00    0.00    1001+85015   detect_collisions [26]
+                               85015             detect_collisions [26]
+-----------------------------------------------
+                0.00    0.00     939/939         CollisionWorld_detectIntersection [9]
+[27]     0.0    0.00    0.00     939         IntersectionEventNode_swapData [27]
+-----------------------------------------------
+                0.00    0.00     809/809         LineDemo_createLines [40]
+[28]     0.0    0.00    0.00     809         CollisionWorld_addLine [28]
+-----------------------------------------------
+                0.00    0.00     809/809         LineDemo_createLines [40]
+[29]     0.0    0.00    0.00     809         Vec_makeFromLine [29]
+-----------------------------------------------
+                0.00    0.00       1/1           LineDemo_delete [41]
+[30]     0.0    0.00    0.00       1         CollisionWorld_delete [30]
+-----------------------------------------------
+                0.00    0.00       1/1           LineDemo_createLines [40]
+[31]     0.0    0.00    0.00       1         CollisionWorld_new [31]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index  A unique number given to each element of the table.
+        Index numbers are sorted numerically.
+        The index number is printed next to every function name so
+        it is easier to look up where the function is in the table.
+
+     % time This is the percentage of the `total' time that was spent
+        in this function and its children.  Note that due to
+        different viewpoints, functions excluded by options, etc,
+        these numbers will NOT add up to 100%.
+
+     self   This is the total amount of time spent in this function.
+
+     children   This is the total amount of time propagated into this
+        function by its children.
+
+     called This is the number of times the function was called.
+        If the function called itself recursively, the number
+        only includes non-recursive calls, and is followed by
+        a `+' and the number of recursive calls.
+
+     name   The name of the current function.  The index number is
+        printed after it.  If the function is a member of a
+        cycle, the cycle number is printed between the
+        function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self   This is the amount of time that was propagated directly
+        from the function into this parent.
+
+     children   This is the amount of time that was propagated from
+        the function's children into this parent.
+
+     called This is the number of times this parent called the
+        function `/' the total number of times the function
+        was called.  Recursive calls to the function are not
+        included in the number after the `/'.
+
+     name   This is the name of the parent.  The parent's index
+        number is printed after it.  If the parent is a
+        member of a cycle, the cycle number is printed between
+        the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `&lt;spontaneous&gt;' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self   This is the amount of time that was propagated directly
+        from the child into the function.
+
+     children   This is the amount of time that was propagated from the
+        child's children to the function.
+
+     called This is the number of times the function called
+        this child `/' the total number of times the child
+        was called.  Recursive calls by the child are not
+        listed in the number after the `/'.
+
+     name   This is the name of the child.  The child's index
+        number is printed after it.  If the child is a
+        member of a cycle, the cycle number is printed
+        between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+
+Index by function name
+
+  [28] CollisionWorld_addLine [18] IntersectionEventNode_compareData [6] Vec_subtract
+  [15] CollisionWorld_collisionSolver [27] IntersectionEventNode_swapData [14] delete_Quadtree
+  [30] CollisionWorld_delete   [5] Vec_add                [26] detect_collisions
+   [9] CollisionWorld_detectIntersection [23] Vec_angle    [1] detect_collisions_recursive
+  [13] CollisionWorld_lineWallCollision [17] Vec_dotProduct [16] getIntersectionPoint
+  [31] CollisionWorld_new     [19] Vec_length             [10] insert_line
+   [8] CollisionWorld_updateLines [29] Vec_makeFromLine    [2] intersect
+  [21] IntersectionEventList_appendNode [4] Vec_multiply   [3] intersectLines
+  [24] IntersectionEventList_deleteNodes [20] Vec_normalize [11] parse_CollisionWorld_to_Quadtree
+  [25] IntersectionEventList_make [22] Vec_orthogonal     [12] pointInParallelogram
+</code></pre>
+</article></body></html>
