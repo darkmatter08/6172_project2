@@ -51,24 +51,13 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
   if ( l1_br_x < l2_tl_x || l1_tl_x > l2_br_x || l1_br_y < l2_tl_y || l1_tl_y > l2_br_y )
     return NO_INTERSECTION;
 
-  int num_line_intersections = 0;
-  bool top_intersected = false;
-  bool bottom_intersected = false;
-
   if (intersectLines(l1->p1, l1->p2, l2->p1, l2->p2)) {
     return ALREADY_INTERSECTED;
   }
-  if (intersectLines(l1->p1, l1->p2, p1, p2)) {
-    num_line_intersections++;
-  }
-  if (intersectLines(l1->p1, l1->p2, p1, l2->p1)) {
-    num_line_intersections++;
-    top_intersected = true;
-  }
-  if (intersectLines(l1->p1, l1->p2, p2, l2->p2)) {
-    num_line_intersections++;
-    bottom_intersected = true;
-  }
+
+  bool top_intersected = intersectLines(l1->p1, l1->p2, p1, l2->p1);
+  bool bottom_intersected = intersectLines(l1->p1, l1->p2, p2, l2->p2);
+  int num_line_intersections = top_intersected + bottom_intersected + intersectLines(l1->p1, l1->p2, p1, p2);
 
   if (num_line_intersections == 2) {
     return L2_WITH_L1;
