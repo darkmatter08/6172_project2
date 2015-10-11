@@ -1,0 +1,409 @@
+Collision Detection
+===================
+Shantanu Jain & David Wong
+--------------------------
+
+###Write-up 1
+```
+$ awsrun ./Screensaver 2500
+
+==== Standard Output ====
+Number of frames = 2500
+---- RESULTS ----
+Elapsed execution time: 59.53s
+720 Line-Wall Collisions
+11053 Line-Line Collisions
+---- END RESULTS ----
+```
+
+###Write-up 2
+Not all line segments need to be stored in leaf notes. If a line *spans* quadrants, meaning it crosses the boundaries of a quadtree's quadrants, then it can be stored in the smallest quadtree that can contain it. When detecting for collisions, this would mean that any lines stored in a non-leaf node must be checked for collisions against all lines in the subtree, making it less efficient, but only for spanning lines. However the quadtree will still be much more efficient than the current naieve implementation.
+
+###Write-up 3
+```
+$ awsrun ./Screensaver 4000
+
+1262 Line-Wall Collisions
+19806 Line-Line Collisions
+
+```
+
+###Write-up 4
+We got a good speedup with an unoptimized quadtree implementation. While we were not able to run the original code with awsrun because it timed out, here we were able to run with all 4000 frames. We estimate about a 5x speedup. 
+```
+Submitting Job: ./Screensaver 4000
+Waiting for job to finish...
+
+==== Standard Output ====
+Number of frames = 4000
+---- RESULTS ----
+Elapsed execution time: 20.1s
+1262 Line-Wall Collisions
+19806 Line-Line Collisions
+---- END RESULTS ----
+```
+
+###Write-up 5
+The quadtree was implemented as a struct that held pointers to 4 other quadtrees that served as the quadtree's children. We assigned the quadtrees's quadrant numbers in the same style as a standard cartesian coordinate plain. If there was a spanning line, then that line was stored in the smallest quadrant that fit it - in other words, as deep in the tree as possible, given the constraint that any lines in that node must fit entirely within that node. We modified the CollisionWorld_detectIntersection method to use the quadtrees. Since it is invoked at every time step to build a list of collisions, at each time step, it parses the current CollisionWorld to a quadtree, calls `detect_collisions()` to build an IntersectionEventList and then deletes the quadtree. 
+
+`Quadtree.c:detect_collisions()` checks for collisions in a valid quadtree. Recognizing that at the leaves of the quadtree, intersections can only occur within the lines of a leaf node. For spanning lines (those not at a leaf), all lines in the subtree of the node it hangs from must be checked for collisions. `detect_collisions_recursive()` receives a line and a subtree, and recursively checks for intersections. `detect_collisions()` checks the whole treee for collisions and builds an IntersectionEventList. 
+
+###Write-up 6
+We varied the value of `N` and found the best value to be 24. We improved by nearly 2.5 seconds with this improvement.
+
+###Write-up 7
+Other optimizations tested:
+ - Implemented a maximum depth for the tree. This basically has the effect of coarsening the Quadtree recursion. Surprisingly, we saw that there were almost no lines at the leaves -- instead the deepeest lines generally were placed in the tree was depth 3 (where the root has a depth of 0). We saw very slight speedups (less than 10%) although we are not sure why, when we set this number to be large, i.e. 24, instead of values like 12 or 9, even though we verified we never reached the max recursion depth. 
+
+ - Inlined the intersect() method. We did this after we parallelized. Surprisingly, we got about a 12% speedup (3.26s to 2.85s). We were not expecting this, given that we thought the compiler with -O3 would aggressively inline itself. 
+
+ - Precomputed the 'relative vector' that was computed at every call of `CollisionWorld_collisionSolver()`, at the time the line was constructed (`LineDemo.c`) via the `Vec_makeFromLine()` method. 
+
+ - Precomputed the length of the 'relative vector' that was computed at every call of CollisionWorld_collisionSolver() via the `Vec_length()` method. 
+
+ - We decided not to attempt updating the quadtree, as the time spent allocing, parsing the CollisionWorld into a quadtree, and deallocing, was very small compared to the time spent in the intersect() method. However, accessing and copying the lines into the quadtree is a substantial amount of memory accesses. When we ran valgrind and cachegrind, we saw that our data and instruction miss rate was essentially 0%, suggesting that the entire data structure and the CollisionWorld is all sitting in cache. 
+
+###Write-up 8
+gprof outout 
+```
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  us/call  us/call  name    
+ 31.53      2.84     2.84 98049242     0.03     0.09  intersect
+ 26.04      5.19     2.35 294147552     0.01     0.01  intersectLines
+ 17.43      6.76     1.57 197726432     0.01     0.01  Vec_multiply
+ 11.77      7.82     1.06 197722238     0.01     0.01  Vec_add
+  6.77      8.43     0.61 98053726     0.01     0.01  Vec_subtract
+  5.27      8.90     0.48                             detect_collisions_recursive
+```
+(after parallelization)
+
+###Write-up 9
+A reducer for the InteresectionEventList was implemented (see `IntersectionEventListReducer.c`). The collisionWorld->numLineLineCollisions value was updated in a serial portion of the code to avoid using the opadd reducer. This was accomplished by adding an unsigned int size member to the IntersectionEventList struct (linked list). This made the LinkedList essentially identical (besides semantics) to the one implemented in Queens in homework 4.
+
+The reducer was registered/unregistered in `CollisionWorld.c:CollisionWorld_detectIntersection()` and passed into the `detect_collisions()` method. This method used `REDUCER_VIEW()` in order to gain access to the underlying IntersectionEventList, and passed the reducer into the `detect_collisions_recursive()` method.
+
+###Appendix
+Full gprof output after parallelization
+```
+jains@ip-172-31-52-91:/afs/athena.mit.edu/user/j/a/jains/Documents/6172/project2$ gprof ./Screensaver.prof 
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  us/call  us/call  name    
+ 31.53      2.84     2.84 98049242     0.03     0.09  intersect
+ 26.04      5.19     2.35 294147552     0.01     0.01  intersectLines
+ 17.43      6.76     1.57 197726432     0.01     0.01  Vec_multiply
+ 11.77      7.82     1.06 197722238     0.01     0.01  Vec_add
+  6.77      8.43     0.61 98053726     0.01     0.01  Vec_subtract
+  5.27      8.90     0.48                             detect_collisions_recursive
+  0.89      8.98     0.08   809809     0.10     0.10  insert_line
+  0.17      9.00     0.02                             pointInParallelogram
+  0.11      9.01     0.01     1001     9.99     9.99  CollisionWorld_lineWallCollision
+  0.06      9.01     0.01     1001     5.00     5.00  delete_Quadtree
+  0.00      9.01     0.00     8156     0.00     0.00  Vec_dotProduct
+  0.00      9.01     0.00     7764     0.00     0.00  IntersectionEventNode_compareData
+  0.00      9.01     0.00     4426     0.00     0.00  Vec_length
+  0.00      9.01     0.00     2155     0.00     0.00  Vec_normalize
+  0.00      9.01     0.00     2097     0.00     0.06  CollisionWorld_collisionSolver
+  0.00      9.01     0.00     2097     0.00     0.00  IntersectionEventList_appendNode
+  0.00      9.01     0.00     2039     0.00     0.00  Vec_orthogonal
+  0.00      9.01     0.00     1505     0.00     0.00  Vec_angle
+  0.00      9.01     0.00     1001     0.00    85.07  CollisionWorld_detectIntersection
+  0.00      9.01     0.00     1001     0.00   106.60  CollisionWorld_updateLines
+  0.00      9.01     0.00     1001     0.00     0.00  IntersectionEventList_deleteNodes
+  0.00      9.01     0.00     1001     0.00     0.00  IntersectionEventList_make
+  0.00      9.01     0.00     1001     0.00     0.00  detect_collisions
+  0.00      9.01     0.00     1001     0.00    79.95  parse_CollisionWorld_to_Quadtree
+  0.00      9.01     0.00      939     0.00     0.00  IntersectionEventNode_swapData
+  0.00      9.01     0.00      809     0.00     0.00  CollisionWorld_addLine
+  0.00      9.01     0.00      809     0.00     0.00  Vec_makeFromLine
+  0.00      9.01     0.00       58     0.00     0.02  getIntersectionPoint
+  0.00      9.01     0.00        1     0.00     0.00  CollisionWorld_delete
+  0.00      9.01     0.00        1     0.00     0.00  CollisionWorld_new
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.11% of 9.01 seconds
+
+index % time    self  children    called     name
+                             4499064             detect_collisions_recursive [1]
+[1]     98.5    0.48    8.41       0+4499064 detect_collisions_recursive [1]
+                2.84    5.57 98049242/98049242     intersect [2]
+                0.00    0.00    2097/2097        IntersectionEventList_appendNode [21]
+                             4499064             detect_collisions_recursive [1]
+-----------------------------------------------
+                2.84    5.57 98049242/98049242     detect_collisions_recursive [1]
+[2]     93.3    2.84    5.57 98049242         intersect [2]
+                2.35    0.00 294147552/294147552     intersectLines [3]
+                1.56    0.00 196098484/197726432     Vec_multiply [4]
+                1.05    0.00 196098484/197722238     Vec_add [5]
+                0.61    0.00 98049242/98053726     Vec_subtract [6]
+                0.00    0.00    1505/1505        Vec_angle [23]
+-----------------------------------------------
+                2.35    0.00 294147552/294147552     intersect [2]
+[3]     26.0    2.35    0.00 294147552         intersectLines [3]
+-----------------------------------------------
+                0.00    0.00      58/197726432     getIntersectionPoint [16]
+                0.00    0.00    8272/197726432     CollisionWorld_collisionSolver [15]
+                0.01    0.00 1619618/197726432     CollisionWorld_updateLines [8]
+                1.56    0.00 196098484/197726432     intersect [2]
+[4]     17.4    1.57    0.00 197726432         Vec_multiply [4]
+-----------------------------------------------
+                0.00    0.00      58/197722238     getIntersectionPoint [16]
+                0.00    0.00    4078/197722238     CollisionWorld_collisionSolver [15]
+                0.01    0.00 1619618/197722238     CollisionWorld_updateLines [8]
+                1.05    0.00 196098484/197722238     intersect [2]
+[5]     11.8    1.06    0.00 197722238         Vec_add [5]
+-----------------------------------------------
+                0.00    0.00      58/98053726     getIntersectionPoint [16]
+                0.00    0.00    4426/98053726     CollisionWorld_collisionSolver [15]
+                0.61    0.00 98049242/98053726     intersect [2]
+[6]      6.8    0.61    0.00 98053726         Vec_subtract [6]
+-----------------------------------------------
+                                                 <spontaneous>
+[7]      1.3    0.00    0.12                 LineDemo_update [7]
+                0.00    0.11    1001/1001        CollisionWorld_updateLines [8]
+                0.01    0.00    1001/1001        CollisionWorld_lineWallCollision [13]
+-----------------------------------------------
+                0.00    0.11    1001/1001        LineDemo_update [7]
+[8]      1.2    0.00    0.11    1001         CollisionWorld_updateLines [8]
+                0.00    0.09    1001/1001        CollisionWorld_detectIntersection [9]
+                0.01    0.00 1619618/197726432     Vec_multiply [4]
+                0.01    0.00 1619618/197722238     Vec_add [5]
+-----------------------------------------------
+                0.00    0.09    1001/1001        CollisionWorld_updateLines [8]
+[9]      0.9    0.00    0.09    1001         CollisionWorld_detectIntersection [9]
+                0.00    0.08    1001/1001        parse_CollisionWorld_to_Quadtree [11]
+                0.01    0.00    1001/1001        delete_Quadtree [14]
+                0.00    0.00    2097/2097        CollisionWorld_collisionSolver [15]
+                0.00    0.00    7764/7764        IntersectionEventNode_compareData [18]
+                0.00    0.00    1001/1001        IntersectionEventList_make [25]
+                0.00    0.00    1001/1001        detect_collisions [26]
+                0.00    0.00    1001/1001        IntersectionEventList_deleteNodes [24]
+                0.00    0.00     939/939         IntersectionEventNode_swapData [27]
+-----------------------------------------------
+                              291480             insert_line [10]
+                0.08    0.00  809809/809809      parse_CollisionWorld_to_Quadtree [11]
+[10]     0.9    0.08    0.00  809809+291480  insert_line [10]
+                              291480             insert_line [10]
+-----------------------------------------------
+                0.00    0.08    1001/1001        CollisionWorld_detectIntersection [9]
+[11]     0.9    0.00    0.08    1001         parse_CollisionWorld_to_Quadtree [11]
+                0.08    0.00  809809/809809      insert_line [10]
+-----------------------------------------------
+                                                 <spontaneous>
+[12]     0.2    0.02    0.00                 pointInParallelogram [12]
+-----------------------------------------------
+                0.01    0.00    1001/1001        LineDemo_update [7]
+[13]     0.1    0.01    0.00    1001         CollisionWorld_lineWallCollision [13]
+-----------------------------------------------
+                               23796             delete_Quadtree [14]
+                0.01    0.00    1001/1001        CollisionWorld_detectIntersection [9]
+[14]     0.1    0.01    0.00    1001+23796   delete_Quadtree [14]
+                               23796             delete_Quadtree [14]
+-----------------------------------------------
+                0.00    0.00    2097/2097        CollisionWorld_detectIntersection [9]
+[15]     0.0    0.00    0.00    2097         CollisionWorld_collisionSolver [15]
+                0.00    0.00    8272/197726432     Vec_multiply [4]
+                0.00    0.00    4426/98053726     Vec_subtract [6]
+                0.00    0.00    4078/197722238     Vec_add [5]
+                0.00    0.00      58/58          getIntersectionPoint [16]
+                0.00    0.00    8156/8156        Vec_dotProduct [17]
+                0.00    0.00    4426/4426        Vec_length [19]
+                0.00    0.00    2155/2155        Vec_normalize [20]
+                0.00    0.00    2039/2039        Vec_orthogonal [22]
+-----------------------------------------------
+                0.00    0.00      58/58          CollisionWorld_collisionSolver [15]
+[16]     0.0    0.00    0.00      58         getIntersectionPoint [16]
+                0.00    0.00      58/197726432     Vec_multiply [4]
+                0.00    0.00      58/98053726     Vec_subtract [6]
+                0.00    0.00      58/197722238     Vec_add [5]
+-----------------------------------------------
+                0.00    0.00    8156/8156        CollisionWorld_collisionSolver [15]
+[17]     0.0    0.00    0.00    8156         Vec_dotProduct [17]
+-----------------------------------------------
+                0.00    0.00    7764/7764        CollisionWorld_detectIntersection [9]
+[18]     0.0    0.00    0.00    7764         IntersectionEventNode_compareData [18]
+-----------------------------------------------
+                0.00    0.00    4426/4426        CollisionWorld_collisionSolver [15]
+[19]     0.0    0.00    0.00    4426         Vec_length [19]
+-----------------------------------------------
+                0.00    0.00    2155/2155        CollisionWorld_collisionSolver [15]
+[20]     0.0    0.00    0.00    2155         Vec_normalize [20]
+-----------------------------------------------
+                0.00    0.00    2097/2097        detect_collisions_recursive [1]
+[21]     0.0    0.00    0.00    2097         IntersectionEventList_appendNode [21]
+-----------------------------------------------
+                0.00    0.00    2039/2039        CollisionWorld_collisionSolver [15]
+[22]     0.0    0.00    0.00    2039         Vec_orthogonal [22]
+-----------------------------------------------
+                0.00    0.00    1505/1505        intersect [2]
+[23]     0.0    0.00    0.00    1505         Vec_angle [23]
+-----------------------------------------------
+                0.00    0.00    1001/1001        CollisionWorld_detectIntersection [9]
+[24]     0.0    0.00    0.00    1001         IntersectionEventList_deleteNodes [24]
+-----------------------------------------------
+                0.00    0.00    1001/1001        CollisionWorld_detectIntersection [9]
+[25]     0.0    0.00    0.00    1001         IntersectionEventList_make [25]
+-----------------------------------------------
+                               85015             detect_collisions [26]
+                0.00    0.00    1001/1001        CollisionWorld_detectIntersection [9]
+[26]     0.0    0.00    0.00    1001+85015   detect_collisions [26]
+                               85015             detect_collisions [26]
+-----------------------------------------------
+                0.00    0.00     939/939         CollisionWorld_detectIntersection [9]
+[27]     0.0    0.00    0.00     939         IntersectionEventNode_swapData [27]
+-----------------------------------------------
+                0.00    0.00     809/809         LineDemo_createLines [40]
+[28]     0.0    0.00    0.00     809         CollisionWorld_addLine [28]
+-----------------------------------------------
+                0.00    0.00     809/809         LineDemo_createLines [40]
+[29]     0.0    0.00    0.00     809         Vec_makeFromLine [29]
+-----------------------------------------------
+                0.00    0.00       1/1           LineDemo_delete [41]
+[30]     0.0    0.00    0.00       1         CollisionWorld_delete [30]
+-----------------------------------------------
+                0.00    0.00       1/1           LineDemo_createLines [40]
+[31]     0.0    0.00    0.00       1         CollisionWorld_new [31]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+
+Index by function name
+
+  [28] CollisionWorld_addLine [18] IntersectionEventNode_compareData [6] Vec_subtract
+  [15] CollisionWorld_collisionSolver [27] IntersectionEventNode_swapData [14] delete_Quadtree
+  [30] CollisionWorld_delete   [5] Vec_add                [26] detect_collisions
+   [9] CollisionWorld_detectIntersection [23] Vec_angle    [1] detect_collisions_recursive
+  [13] CollisionWorld_lineWallCollision [17] Vec_dotProduct [16] getIntersectionPoint
+  [31] CollisionWorld_new     [19] Vec_length             [10] insert_line
+   [8] CollisionWorld_updateLines [29] Vec_makeFromLine    [2] intersect
+  [21] IntersectionEventList_appendNode [4] Vec_multiply   [3] intersectLines
+  [24] IntersectionEventList_deleteNodes [20] Vec_normalize [11] parse_CollisionWorld_to_Quadtree
+  [25] IntersectionEventList_make [22] Vec_orthogonal     [12] pointInParallelogram
+```
