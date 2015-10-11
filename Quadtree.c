@@ -134,7 +134,7 @@ void reassign_current_to_quadrants(Quadtree * tree) {
 }
 
 // check if line can fit inside a given Quadtree's boundaries
-bool can_fit(Line * line, Quadtree * tree) {
+inline bool can_fit(Line * line, Quadtree * tree) {
 	return 	
 		// check line at beginning of time step
 		line->p1.x >= tree->p1.x &&
@@ -229,6 +229,21 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 
 	// CILK_C_REGISTER_REDUCER(X);
 
+	// if children exist, do this recursively
+	if (tree->quadrant_1) {
+		assert(tree->quadrant_2);
+		assert(tree->quadrant_3);
+		assert(tree->quadrant_4);
+
+		// cilk_spawn here
+		cilk_spawn detect_collisions(tree->quadrant_1, collisionWorld, X);
+		cilk_spawn detect_collisions(tree->quadrant_2, collisionWorld, X);
+		cilk_spawn detect_collisions(tree->quadrant_3, collisionWorld, X);
+		detect_collisions(tree->quadrant_4, collisionWorld, X);
+
+		cilk_sync;
+	}
+
 	// check everything at the root
 	cilk_for (int i = 0; i < tree->numOfLines; i++) {
 		for (int j = i + 1; j < tree->numOfLines; j++) {
@@ -258,21 +273,6 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 			detect_collisions_recursive(tree->lines[i], tree->quadrant_3, collisionWorld, X);
 			detect_collisions_recursive(tree->lines[i], tree->quadrant_4, collisionWorld, X);
 		}
-	}
-
-	// if children exist, do this recursively
-	if (tree->quadrant_1) {
-		assert(tree->quadrant_2);
-		assert(tree->quadrant_3);
-		assert(tree->quadrant_4);
-
-		// cilk_spawn here
-		cilk_spawn detect_collisions(tree->quadrant_1, collisionWorld, X);
-		cilk_spawn detect_collisions(tree->quadrant_2, collisionWorld, X);
-		cilk_spawn detect_collisions(tree->quadrant_3, collisionWorld, X);
-		detect_collisions(tree->quadrant_4, collisionWorld, X);
-
-		cilk_sync;
 	}
 
 	// *intersectionEventList_return = X.value;
