@@ -63,6 +63,8 @@ Other optimizations tested:
 
  - We decided not to attempt updating the quadtree, as the time spent allocing, parsing the CollisionWorld into a quadtree, and deallocing, was very small compared to the time spent in the intersect() method. However, accessing and copying the lines into the quadtree is a substantial amount of memory accesses. When we ran valgrind and cachegrind, we saw that our data and instruction miss rate was essentially 0%, suggesting that the entire data structure and the CollisionWorld is all sitting in cache. 
 
+ - We added an extra check in `intersect()` which uses the concept of bounded boxes to immediately return `NO_INTERSECTION` in some cases. We draw a bounding box around both l1 and the parallelogram of l2. If the bounding boxes do not intersect, then we can assume no intersection exists and immediately return. This was one of our most effective optimizations, as we gained about 20% in time, because calls to `intersect_lines()` were saved if there was no intersection. `intersect_lines()` calls were reduced so much that they no longer showed up in gprof, whereas before it had shown up as the 2nd or 3rd hottest function. 
+
 ###Write-up 8
 gprof outout 
 ```
