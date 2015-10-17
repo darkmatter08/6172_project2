@@ -151,12 +151,9 @@ double direction(Vec pi, Vec pj, Vec pk) {
 
 // Check if a point pk is in the line segment (pi, pj).
 // pi, pj, and pk must be collinear.
-bool onSegment(Vec pi, Vec pj, Vec pk) {
-  if (((pi.x <= pk.x && pk.x <= pj.x) || (pj.x <= pk.x && pk.x <= pi.x))
-      && ((pi.y <= pk.y && pk.y <= pj.y) || (pj.y <= pk.y && pk.y <= pi.y))) {
-    return true;
-  }
-  return false;
+inline bool onSegment(Vec pi, Vec pj, Vec pk) {
+  return (((pi.x <= pk.x && pk.x <= pj.x) || (pj.x <= pk.x && pk.x <= pi.x))
+      && ((pi.y <= pk.y && pk.y <= pj.y) || (pj.y <= pk.y && pk.y <= pi.y)));
 }
 
 // Calculate the cross product.
