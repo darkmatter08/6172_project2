@@ -41,11 +41,14 @@ struct Quadtree {
   Vec p2;  // Higher value corner
 
   unsigned int depth;
+
+  // null if root
+  Quadtree * parent;
 };
 
 // Make new Quadtree
 Quadtree make_quadtree(unsigned int capacity, double x_lo, double y_lo, 
-  double x_hi, double y_hi, unsigned int depth);
+  double x_hi, double y_hi, unsigned int depth, Quadtree * parent);
 
 // Parses the CollisionWorld into a Quadtree
 Quadtree* parse_CollisionWorld_to_Quadtree(CollisionWorld * world);
@@ -70,3 +73,5 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 
 // Counts number of lines in the subtree including and hanging from node tree
 // int countLinesInSubtree(Quadtree * tree);
+
+void detect_collisions_recursive_block(Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList_reducer * X);

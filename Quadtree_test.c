@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 
 Quadtree * create_Quadtree() {
 	Quadtree *tree = malloc(sizeof(Quadtree));
-	*tree = make_quadtree(3, 0, 0, 6, 6, 0); // TODO: add in extra asserts
+	*tree = make_quadtree(3, 0, 0, 6, 6, 0, NULL); // TODO: add in extra asserts
 	
 	// check bounds
 	assert(tree->p1.x == 0);

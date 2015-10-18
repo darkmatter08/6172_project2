@@ -142,7 +142,7 @@ void CollisionWorld_detectIntersection(CollisionWorld* collisionWorld) {
 
   // Replace as part of basic QuadTree
   Quadtree * tree = parse_CollisionWorld_to_Quadtree(collisionWorld);
-  detect_collisions(tree, collisionWorld, &X);
+  detect_collisions_recursive_block(tree, collisionWorld, &X);
   delete_Quadtree(tree);
 
   IntersectionEventList intersectionEventList = X.value;
