@@ -30,8 +30,8 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
   Vec velocity = {.x = l2->velocity.x - l1->velocity.x, .y = l2->velocity.y - l1->velocity.y};
 
   // Get the parallelogram.
-  Vec p1 = Vec_add(l2->p1, Vec_multiply(velocity, time));
-  Vec p2 = Vec_add(l2->p2, Vec_multiply(velocity, time));
+  Vec p1 = {.x = l2->p1.x + velocity.x * time, .y = l2->p1.y + velocity.y * time};//Vec_add(l2->p1, Vec_multiply(velocity, time));
+  Vec p2 = {.x = l2->p2.x + velocity.x * time, .y = l2->p2.y + velocity.y * time};//Vec_add(l2->p2, Vec_multiply(velocity, time));
 
   // l2 parallelogram: p1, p2, l2->p1, l2->p2
   // l2 bounding box:
