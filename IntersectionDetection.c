@@ -30,8 +30,8 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
   Vec velocity = {.x = l2->velocity.x - l1->velocity.x, .y = l2->velocity.y - l1->velocity.y};
 
   // Get the parallelogram.
-  Vec p1 = {.x = l2->p1.x + velocity.x * time, .y = l2->p1.y + velocity.y * time};//Vec_add(l2->p1, Vec_multiply(velocity, time));
-  Vec p2 = {.x = l2->p2.x + velocity.x * time, .y = l2->p2.y + velocity.y * time};//Vec_add(l2->p2, Vec_multiply(velocity, time));
+  Vec p1 = {.x = l2->p1.x + velocity.x * time, .y = l2->p1.y + velocity.y * time};
+  Vec p2 = {.x = l2->p2.x + velocity.x * time, .y = l2->p2.y + velocity.y * time};
 
   // l2 parallelogram: p1, p2, l2->p1, l2->p2
   // l2 bounding box:
@@ -72,20 +72,8 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
 
   double angle = Vec_angle(l1->relative_vector, l2->relative_vector);
 
-  if (top_intersected) {
-    if (angle < 0) {
-      return L2_WITH_L1;
-    } else {
-      return L1_WITH_L2;
-    }
-  }
-
-  if (bottom_intersected) {
-    if (angle > 0) {
-      return L2_WITH_L1;
-    } else {
-      return L1_WITH_L2;
-    }
+  if ((top_intersected && (angle < 0)) || (bottom_intersected && (angle > 0))) {
+    return L2_WITH_L1;
   }
 
   return L1_WITH_L2;
@@ -98,11 +86,8 @@ inline bool pointInParallelogram(Vec point, Vec p1, Vec p2, Vec p3, Vec p4) {
   double d3 = direction(p1, p3, point);
   double d4 = direction(p2, p4, point);
 
-  if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0))
-      && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) {
-    return true;
-  }
-  return false;
+  return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0))
+      && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
 }
 
 // Check if two lines intersect.
@@ -136,17 +121,15 @@ inline bool intersectLines(Vec p1, Vec p2, Vec p3, Vec p4) {
 
 // Obtain the intersection point for two intersecting line segments.
 Vec getIntersectionPoint(Vec p1, Vec p2, Vec p3, Vec p4) {
-  double u;
-
-  u = ((p4.x - p3.x) * (p1.y - p3.y) - (p4.y - p3.y) * (p1.x - p3.x))
+  double u = ((p4.x - p3.x) * (p1.y - p3.y) - (p4.y - p3.y) * (p1.x - p3.x))
       / ((p4.y - p3.y) * (p2.x - p1.x) - (p4.x - p3.x) * (p2.y - p1.y));
 
-  return Vec_add(p1, Vec_multiply(Vec_subtract(p2, p1), u));
+  return (Vec) {.x = p1.x + (p2.x - p1.x) * u, .y = p1.y + (p2.y - p1.y) * u};
 }
 
 // Check the direction of two lines (pi, pj) and (pi, pk).
-double direction(Vec pi, Vec pj, Vec pk) {
-  return crossProduct(pk.x - pi.x, pk.y - pi.y, pj.x - pi.x, pj.y - pi.y);
+inline double direction(Vec pi, Vec pj, Vec pk) {
+  return (pk.x - pi.x) * (pj.y - pi.y) - (pk.y - pi.y) * (pj.x - pi.x);
 }
 
 // Check if a point pk is in the line segment (pi, pj).
@@ -155,9 +138,3 @@ inline bool onSegment(Vec pi, Vec pj, Vec pk) {
   return (((pi.x <= pk.x && pk.x <= pj.x) || (pj.x <= pk.x && pk.x <= pi.x))
       && ((pi.y <= pk.y && pk.y <= pj.y) || (pj.y <= pk.y && pk.y <= pi.y)));
 }
-
-// Calculate the cross product.
-double crossProduct(double x1, double y1, double x2, double y2) {
-  return x1 * y2 - x2 * y1;
-}
-

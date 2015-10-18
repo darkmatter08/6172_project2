@@ -54,7 +54,7 @@ double direction(Vec pi, Vec pj, Vec pk);
 bool onSegment(Vec pi, Vec pj, Vec pk);
 
 // Calculate the cross product.
-double crossProduct(double x1, double y1, double x2, double y2);
+// double crossProduct(double x1, double y1, double x2, double y2);
 
 // Obtain the intersection point for two intersecting line segments.
 Vec getIntersectionPoint(Vec p1, Vec p2, Vec p3, Vec p4);
