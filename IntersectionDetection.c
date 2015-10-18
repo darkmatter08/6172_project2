@@ -27,7 +27,7 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
   assert(compareLines(l1, l2) < 0);
 
   // Get relative velocity.
-  Vec velocity = Vec_subtract(l2->velocity, l1->velocity);
+  Vec velocity = {.x = l2->velocity.x - l1->velocity.x, .y = l2->velocity.y - l1->velocity.y};
 
   // Get the parallelogram.
   Vec p1 = Vec_add(l2->p1, Vec_multiply(velocity, time));
