@@ -39,7 +39,7 @@ Vec Vec_makeFromLine(struct Line line) {
 
 // ************************* Fundamental attributes **************************
 
-vec_dimension Vec_length(Vec vector) {
+inline vec_dimension Vec_length(Vec vector) {
   return hypot(vector.x, vector.y);
 }
 
@@ -93,10 +93,10 @@ Vec Vec_divide(Vec vector, const double scalar) {
   return Vec_make(vector.x / scalar, vector.y / scalar);
 }
 
-vec_dimension Vec_dotProduct(Vec lhs, Vec rhs) {
+inline vec_dimension Vec_dotProduct(Vec lhs, Vec rhs) {
   return lhs.x * rhs.x + lhs.y * rhs.y;
 }
 
-vec_dimension Vec_crossProduct(Vec lhs, Vec rhs) {
+inline vec_dimension Vec_crossProduct(Vec lhs, Vec rhs) {
   return lhs.x * rhs.y - lhs.y * rhs.x;
 }
