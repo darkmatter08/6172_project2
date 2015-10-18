@@ -433,11 +433,16 @@ void detect_collisions_recursive_block(Quadtree * tree, CollisionWorld * collisi
   }
 
   // walk up the tree
-  Quadtree * checking = tree->parent;
-  while (checking != NULL) {
+  // Quadtree * checking = tree->parent;
+  cilk_for (int i = 0; i < tree->depth; i++) {
+    Quadtree * checking = tree->parent;
+    for (int j = 0; j < i; j++) {
+      checking = checking->parent;
+    }
+  // while (checking != NULL) {
     // all pairs
-    for (int check_source_index = 0; check_source_index < checking->numOfLines; check_source_index++) {//cilk
-      for (int tree_index = 0; tree_index < tree->numOfLines; tree_index++) {//cilk
+    for (int check_source_index = 0; check_source_index < checking->numOfLines; check_source_index++) {
+      for (int tree_index = 0; tree_index < tree->numOfLines; tree_index++) {
         Line * l1 = tree->lines[tree_index];
         Line * l2 = checking->lines[check_source_index];
 
