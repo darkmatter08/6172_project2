@@ -31,11 +31,13 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
   }
 
   // Get relative velocity.
-  Vec velocity = {.x = l2->velocity.x - l1->velocity.x, .y = l2->velocity.y - l1->velocity.y};
+  // Vec velocity = {.x = l2->velocity.x - l1->velocity.x, .y = l2->velocity.y - l1->velocity.y};
+  double dx = (l2->velocity.x - l1->velocity.x) * time;
+  double dy = (l2->velocity.y - l1->velocity.y) * time;
 
   // Get the parallelogram.
-  Vec p1 = {.x = l2->p1.x + velocity.x * time, .y = l2->p1.y + velocity.y * time};
-  Vec p2 = {.x = l2->p2.x + velocity.x * time, .y = l2->p2.y + velocity.y * time};
+  Vec p1 = {.x = l2->p1.x + dx, .y = l2->p1.y + dy};
+  Vec p2 = {.x = l2->p2.x + dx, .y = l2->p2.y + dy};
 
   bool top_intersected = intersectLines(l1->p1, l1->p2, p1, l2->p1);
   bool bottom_intersected = intersectLines(l1->p1, l1->p2, p2, l2->p2);

@@ -74,4 +74,4 @@ void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, Interse
 // Counts number of lines in the subtree including and hanging from node tree
 // int countLinesInSubtree(Quadtree * tree);
 
-void detect_collisions_recursive_block(Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList_reducer * X);
+void detect_collisions_recursive_block(Quadtree * tree, IntersectionEventList_reducer * X);
