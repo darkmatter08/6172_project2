@@ -26,32 +26,16 @@
 IntersectionType intersect(Line *l1, Line *l2, double time) {
   assert(compareLines(l1, l2) < 0);
 
+  if (intersectLines(l1->p1, l1->p2, l2->p1, l2->p2)) {
+    return ALREADY_INTERSECTED;
+  }
+
   // Get relative velocity.
   Vec velocity = {.x = l2->velocity.x - l1->velocity.x, .y = l2->velocity.y - l1->velocity.y};
 
   // Get the parallelogram.
   Vec p1 = {.x = l2->p1.x + velocity.x * time, .y = l2->p1.y + velocity.y * time};
   Vec p2 = {.x = l2->p2.x + velocity.x * time, .y = l2->p2.y + velocity.y * time};
-
-  // l2 parallelogram: p1, p2, l2->p1, l2->p2
-  // l2 bounding box:
-  vec_dimension l2_tl_x = MIN(MIN(p1.x, p2.x), MIN(l2->p1.x, l2->p2.x));
-  vec_dimension l2_tl_y = MIN(MIN(p1.y, p2.y), MIN(l2->p1.y, l2->p2.y));
-  vec_dimension l2_br_x = MAX(MAX(p1.x, p2.x), MAX(l2->p1.x, l2->p2.x));
-  vec_dimension l2_br_y = MAX(MAX(p1.y, p2.y), MAX(l2->p1.y, l2->p2.y));
-  // l1 bounding box:
-  vec_dimension l1_tl_x = MIN(l1->p1.x, l1->p2.x);
-  vec_dimension l1_tl_y = MIN(l1->p1.y, l1->p2.y);
-  vec_dimension l1_br_x = MAX(l1->p1.x, l1->p2.x);
-  vec_dimension l1_br_y = MAX(l1->p1.y, l1->p2.y);
-  
-  // logic:
-  if ( l1_br_x < l2_tl_x || l1_tl_x > l2_br_x || l1_br_y < l2_tl_y || l1_tl_y > l2_br_y )
-    return NO_INTERSECTION;
-
-  if (intersectLines(l1->p1, l1->p2, l2->p1, l2->p2)) {
-    return ALREADY_INTERSECTED;
-  }
 
   bool top_intersected = intersectLines(l1->p1, l1->p2, p1, l2->p1);
   bool bottom_intersected = intersectLines(l1->p1, l1->p2, p2, l2->p2);
