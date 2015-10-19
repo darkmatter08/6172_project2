@@ -35,6 +35,7 @@
 
 CollisionWorld* CollisionWorld_new(const unsigned int capacity) {
   assert(capacity > 0);
+  __cilkrts_set_param("nworkers", "8");
 
   CollisionWorld* collisionWorld = malloc(sizeof(CollisionWorld));
   if (collisionWorld == NULL) {

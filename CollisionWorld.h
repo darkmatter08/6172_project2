@@ -24,6 +24,8 @@
 #ifndef COLLISIONWORLD_H_
 #define COLLISIONWORLD_H_
 
+#include <cilk/cilk_api.h>
+
 #include "./Line.h"
 #include "./IntersectionDetection.h"
 
