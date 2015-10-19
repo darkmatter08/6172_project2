@@ -23,6 +23,7 @@
 
 #include "./CollisionWorld.h"
 
+#include <cilk/cilk_api.h>
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
@@ -35,6 +36,7 @@
 
 CollisionWorld* CollisionWorld_new(const unsigned int capacity) {
   assert(capacity > 0);
+  __cilkrts_set_param("nworkers", "8");
 
   CollisionWorld* collisionWorld = malloc(sizeof(CollisionWorld));
   if (collisionWorld == NULL) {
