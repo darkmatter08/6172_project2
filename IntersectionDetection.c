@@ -46,7 +46,7 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
   double d5 = direction(l2->p1, l2->p2, l1->p1);
   double d6 = direction(l2->p1, l2->p2, l1->p2); 
 
-  if (intersectLines(l1->p1, l1->p2, l2->p1, l2->p2, d1*d2, d5*d6)) {
+  if (intersectLines(d1*d2, d5*d6)) {
     return ALREADY_INTERSECTED;
   }
 
@@ -57,9 +57,9 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
   double d11 = direction(p1, p2, l1->p1);
   double d12 = direction(p1, p2, l1->p2);
 
-  bool top_intersected = intersectLines(l1->p1, l1->p2, p1, l2->p1, d3*d1, d7*d8);
-  bool bottom_intersected = intersectLines(l1->p1, l1->p2, p2, l2->p2, d4*d2, d9*d10);
-  int num_line_intersections = top_intersected + bottom_intersected + intersectLines(l1->p1, l1->p2, p1, p2, d3*d4, d11*d12);
+  bool top_intersected = intersectLines(d3*d1, d7*d8);
+  bool bottom_intersected = intersectLines(d4*d2, d9*d10);
+  int num_line_intersections = top_intersected + bottom_intersected + intersectLines(d3*d4, d11*d12);
 
   if (num_line_intersections == 2) {
     return L2_WITH_L1;
@@ -89,16 +89,8 @@ inline bool pointInParallelogram(double d1, double d2) {
 }
 
 // Check if two lines intersect.
-inline bool intersectLines(Vec p1, Vec p2, Vec p3, Vec p4, double d1, double d2) {
-  // If (p1, p2) and (p3, p4) straddle each other, the line segments must
-  // intersect.
-  if (d1 < 0 && d2 < 0) {
-    return true;
-  }
-  if (d1 * d2 != 0) {
-    return false;
-  }
-  return onSegment(p3, p4, p1) || onSegment(p3, p4, p2) || onSegment(p1, p2, p3) || onSegment(p1, p2, p4);
+inline bool intersectLines(double d1, double d2) {
+  return d1 <= 0 && d2 <= 0;
 }
 
 // Obtain the intersection point for two intersecting line segments.
