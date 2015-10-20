@@ -74,7 +74,7 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
     return NO_INTERSECTION;
   }
 
-  double angle = Vec_angle(l1->relative_vector, l2->relative_vector);
+  double angle = atan2(l1->relative_vector.y, l1->relative_vector.x) - atan2(l2->relative_vector.y, l2->relative_vector.x);
 
   if ((top_intersected && (angle < 0)) || (bottom_intersected && (angle > 0))) {
     return L2_WITH_L1;

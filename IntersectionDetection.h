@@ -20,6 +20,7 @@
  * SOFTWARE.
  **/
 
+#include <math.h>
 #include <assert.h>
 #include "./Line.h"
 #include "./Vec.h"
