@@ -65,8 +65,8 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
     return L2_WITH_L1;
   }
 
-  if (pointInParallelogram(l1->p1, l2->p1, l2->p2, p1, p2)
-      && pointInParallelogram(l1->p2, l2->p1, l2->p2, p1, p2)) {
+  if (pointInParallelogram(l1->p1, l2->p1, l2->p2, p1, p2, d5, d11, -d7, -d9)
+      && pointInParallelogram(l1->p2, l2->p1, l2->p2, p1, p2, d6, d12, -d8, -d10)) {
     return L1_WITH_L2; // What's the difference wtih :67?
   }
 
@@ -84,12 +84,7 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
 }
 
 // Check if a point is in the parallelogram.
-inline bool pointInParallelogram(Vec point, Vec p1, Vec p2, Vec p3, Vec p4) {
-  double d1 = direction(p1, p2, point);
-  double d2 = direction(p3, p4, point);
-  double d3 = direction(p1, p3, point);
-  double d4 = direction(p2, p4, point);
-
+inline bool pointInParallelogram(Vec point, Vec p1, Vec p2, Vec p3, Vec p4, double d1, double d2, double d3, double d4) {
   return ((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0))
       && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0));
 }
