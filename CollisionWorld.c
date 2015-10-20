@@ -144,11 +144,19 @@ void CollisionWorld_detectIntersection(CollisionWorld* collisionWorld) {
     /* initial value */ IntersectionEventList_make()
   );
 
+  int numQuadtrees = 0;
+  int * pnumQuadtrees = &numQuadtrees;
+  int size = 0;
+  for (int i = 0; i <= MAX_DEPTH; i++) {
+    size += (int) pow(4, i);
+  }
+  Quadtree ** quadtrees = malloc(sizeof(Quadtree *) * size);
+
   CILK_C_REGISTER_REDUCER(X);
 
   // Replace as part of basic QuadTree
-  Quadtree * tree = parse_CollisionWorld_to_Quadtree(collisionWorld);
-  detect_collisions_recursive_block(tree, &X);
+  Quadtree * tree = parse_CollisionWorld_to_Quadtree(collisionWorld, quadtrees, pnumQuadtrees);
+  detect_collisions(tree, &X, quadtrees, pnumQuadtrees);
   delete_Quadtree(tree);
 
   IntersectionEventList intersectionEventList = X.value;

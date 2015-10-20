@@ -51,13 +51,13 @@ Quadtree make_quadtree(unsigned int capacity, double x_lo, double y_lo,
   double x_hi, double y_hi, unsigned int depth, Quadtree * parent);
 
 // Parses the CollisionWorld into a Quadtree
-Quadtree* parse_CollisionWorld_to_Quadtree(CollisionWorld * world);
+Quadtree* parse_CollisionWorld_to_Quadtree(CollisionWorld * world, Quadtree ** quadtrees, int * numQuadtrees);
 
 // inserts line into Quadtree
-void insert_line(Line* l, Quadtree * tree);
+void insert_line(Line* l, Quadtree * tree, Quadtree ** quadtrees, int * numQuadtrees);
 
 // reinserts lines currently in Quadtree back in (called after child Quadtrees are created)
-void reassign_current_to_quadrants(Quadtree * tree);
+void reassign_current_to_quadrants(Quadtree * tree, Quadtree ** quadtrees, int * numQuadtrees);
 
 // check if line can fit inside a given Quadtree's boundaries
 bool can_fit(Line * line, Quadtree * tree);
@@ -65,13 +65,4 @@ bool can_fit(Line * line, Quadtree * tree);
 // Recursively deletes all Quadtrees in this subtree
 void delete_Quadtree(Quadtree * tree);
 
-// Identify collisions recursively for a given line
-void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList_reducer * X);
-
-// Identify collisions in a particular quadtree
-void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList_reducer * X);
-
-// Counts number of lines in the subtree including and hanging from node tree
-// int countLinesInSubtree(Quadtree * tree);
-
-void detect_collisions_recursive_block(Quadtree * tree, IntersectionEventList_reducer * X);
+void detect_collisions(Quadtree * tree, IntersectionEventList_reducer * X, Quadtree ** quadtrees, int * numQuadtrees);
