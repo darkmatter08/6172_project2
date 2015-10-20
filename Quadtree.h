@@ -10,7 +10,7 @@
 
 // N is the maximum number of items in a Quadtree before the 
 // quadtree adds its children. 
-#define N 32
+#define N 64
 // Max Quadtree Depth
 #define MAX_DEPTH 2
 
