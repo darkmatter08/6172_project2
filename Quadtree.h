@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "./IntersectionEventListReducer.h"
+#include "./queue.h"
 
 // N is the maximum number of items in a Quadtree before the 
 // quadtree adds its children. 
@@ -68,10 +69,12 @@ void delete_Quadtree(Quadtree * tree);
 // Identify collisions recursively for a given line
 void detect_collisions_recursive(Line * line, Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList_reducer * X);
 
+void Quadtree_to_Line_array(Quadtree * tree, Line ** lines, int * quadtrees, int* quadtree_numOfLines);
+
 // Identify collisions in a particular quadtree
-void detect_collisions(Quadtree * tree, CollisionWorld * collisionWorld, IntersectionEventList_reducer * X);
+void detect_collisions(Quadtree * tree, int numOfLines, IntersectionEventList_reducer * X);
 
 // Counts number of lines in the subtree including and hanging from node tree
 // int countLinesInSubtree(Quadtree * tree);
 
-void detect_collisions_recursive_block(Quadtree * tree, IntersectionEventList_reducer * X);
+void detect_collisions_recursive_block(Line ** lines, int * quadtrees, int * quadtree_numOfLines, int tree_index, int tree_depth, IntersectionEventList_reducer * X);

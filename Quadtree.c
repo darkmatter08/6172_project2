@@ -184,16 +184,92 @@ void delete_Quadtree(Quadtree * tree) {
   free(tree);
 }
 
-// Checks lines in quadtree check_source against the lines in the sub-quadtree tree recursively
-void detect_collisions_recursive_block(Quadtree * tree, IntersectionEventList_reducer * X) {
+// Change return type to a struct that is a struct with Line** and pointers to the start of quadtrees (Line **)
+void Quadtree_to_Line_array(Quadtree * tree, Line ** lines, int * quadtrees, int* quadtree_numOfLines) {
   assert(tree);
-  // assert(collisionWorld);
+  assert(lines);
+  assert(quadtrees);
+  assert(quadtree_numOfLines);
 
+  int lines_added = 0;
+  int quadtrees_added = 0;
+
+  // BFS
+  queue * myq = malloc(sizeof(queue));
+  init_queue(myq);
+
+  enqueue(myq, tree);
+  // push null to indicate end of level????
+
+  while (!empty(myq)) {
+    Quadtree * current = dequeue(myq);
+
+    quadtrees[quadtrees_added] = lines_added;
+    quadtree_numOfLines[quadtrees_added] = current->numOfLines;
+    quadtrees_added++;
+
+    for (int i = 0; i < current->numOfLines; i++) {
+      lines[lines_added++] = current->lines[i]; // replace with memcpy?
+    }
+    // add null
+    // lines[lines_added] = NULL;
+
+    if (current->quadrant_1) { // not leaf
+      assert(current->quadrant_2);
+      assert(current->quadrant_3);
+      assert(current->quadrant_4);
+
+      enqueue(myq, current->quadrant_1);
+      enqueue(myq, current->quadrant_2);
+      enqueue(myq, current->quadrant_3);
+      enqueue(myq, current->quadrant_4);
+    }
+  }
+  free(myq);
+}
+
+void detect_collisions(Quadtree * tree, int numOfLines, IntersectionEventList_reducer * X) {
+  assert(tree);
+  assert(X);
+
+  //// Convert Quadtree to Line Array /////
+  Line ** lines = malloc(sizeof(Line*) * numOfLines);
+
+  // invariant -- always construct a full tree
+  // overallocate, extra points are 0.
+  // quadtrees[i] gives the index into lines[] that corresponds to the first line in that quadtree.
+  // i.e. lines[quadtrees[i]] = 1st line in the ith quadtree
+  int * quadtrees = calloc(numOfLines, sizeof(int));
+  // quadtree_numOfLines[i] is the number of lines in the quadtree at quadtrees[i]
+  int * quadtree_numOfLines = calloc(numOfLines, sizeof(int*));
+
+  assert(lines);
+  assert(quadtrees);
+  assert(quadtree_numOfLines);
+
+  Quadtree_to_Line_array(tree, lines, quadtrees, quadtree_numOfLines);
+
+  //// END Convert Quadtree to Line Array /////
+
+  // Line ** tree = quadtree[i];
+  // Line ** tree_next = quadtree[i+1];
+  // int numLines = (tree_next - tree) / sizeof((Line *)); // correct?
+
+  detect_collisions_recursive_block(lines, quadtrees, quadtree_numOfLines, 0, 0, X); // Call on root
+
+  // FREE Memory for Convert Quadtree to Line array
+  free(lines);
+  free(quadtrees);
+}
+
+// TODO: Change to accept line array Line**
+// Checks lines in quadtree check_source against the lines in the sub-quadtree tree recursively
+void detect_collisions_recursive_block(Line ** lines, int * quadtrees, int * quadtree_numOfLines, int tree_index, int tree_depth, IntersectionEventList_reducer * X) {
   // check everything at the root -- walk forward
-  cilk_for (int i = 0; i < tree->numOfLines; i++) {
-    for (int j = i + 1; j < tree->numOfLines; j++) {
-      Line * l1 = tree->lines[i];
-      Line * l2 = tree->lines[j];
+  cilk_for (int i = quadtrees[tree_index]; i < quadtrees[tree_index] + quadtree_numOfLines[tree_index]; i++) {
+    for (int j = i + 1; j < quadtrees[tree_index] + quadtree_numOfLines[tree_index]; j++) {
+      Line * l1 = lines[i];
+      Line * l2 = lines[j];
 
       if (compareLines(l1, l2) > 0) {
         Line *temp = l1;
@@ -232,17 +308,20 @@ void detect_collisions_recursive_block(Quadtree * tree, IntersectionEventList_re
 
   // walk up the tree
   // Quadtree * checking = tree->parent;
-  cilk_for (int i = 0; i < tree->depth; i++) {
-    Quadtree * checking = tree->parent;
+  // int depth = (tree_index - 1) / 4;
+  cilk_for (int i = 0; i < tree_depth; i++) {
+    int checking_index = (tree_index - 1) / 4; //parent
     for (int j = 0; j < i; j++) {
-      checking = checking->parent;
+      checking_index = (checking_index - 1) / 4; //->parent;
     }
+    // Quadtree * checking = 
   // while (checking != NULL) {
+
     // all pairs
-    for (int check_source_index = 0; check_source_index < checking->numOfLines; check_source_index++) {
-      for (int tree_index = 0; tree_index < tree->numOfLines; tree_index++) {
-        Line * l1 = tree->lines[tree_index];
-        Line * l2 = checking->lines[check_source_index];
+    for (int check_source_index = quadtrees[checking_index]; check_source_index < quadtrees[checking_index] + quadtree_numOfLines[checking_index]/*checking->numOfLines*/; check_source_index++) {
+      for (int tree_line_index = quadtrees[tree_index]; tree_line_index < quadtrees[tree_index] + quadtree_numOfLines[tree_index]; tree_line_index++) {
+        Line * l1 = lines[tree_line_index];
+        Line * l2 = lines[check_source_index];
 
         if (compareLines(l1, l2) > 0) {
           Line *temp = l1;
@@ -280,15 +359,15 @@ void detect_collisions_recursive_block(Quadtree * tree, IntersectionEventList_re
     }
   }
 
-  if (tree->quadrant_1) {
-    assert(tree->quadrant_2);
-    assert(tree->quadrant_3);
-    assert(tree->quadrant_4);
+  if (quadtrees[4*tree_index+1]/*tree->quadrant_1*/) {
+    assert(quadtrees[4*tree_index+2]);
+    assert(quadtrees[4*tree_index+3]);
+    assert(quadtrees[4*tree_index+4]);
 
-    cilk_spawn detect_collisions_recursive_block(tree->quadrant_1, X);
-    cilk_spawn detect_collisions_recursive_block(tree->quadrant_2, X);
-    cilk_spawn detect_collisions_recursive_block(tree->quadrant_3, X);
-    detect_collisions_recursive_block(tree->quadrant_4, X);
+    cilk_spawn detect_collisions_recursive_block(lines, quadtrees, quadtree_numOfLines, 4*tree_index+1, tree_depth+1, X);
+    cilk_spawn detect_collisions_recursive_block(lines, quadtrees, quadtree_numOfLines, 4*tree_index+2, tree_depth+1, X);
+    cilk_spawn detect_collisions_recursive_block(lines, quadtrees, quadtree_numOfLines, 4*tree_index+3, tree_depth+1, X);
+    detect_collisions_recursive_block(lines, quadtrees, quadtree_numOfLines, 4*tree_index+4, tree_depth+1, X);
 
     cilk_sync;
   }
