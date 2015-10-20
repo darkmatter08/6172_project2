@@ -45,7 +45,7 @@ IntersectionType intersect(Line *l1, Line *l2, double time);
 bool pointInParallelogram(Vec point, Vec p1, Vec p2, Vec p3, Vec p4);
 
 // Check if two lines intersect.
-bool intersectLines(Vec p1, Vec p2, Vec p3, Vec p4);
+bool intersectLines(Vec p1, Vec p2, Vec p3, Vec p4, double d1, double d2);
 
 // Check the direction of two lines (pi, pj) and (pi, pk).
 double direction(Vec pi, Vec pj, Vec pk);

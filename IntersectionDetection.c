@@ -26,12 +26,7 @@
 IntersectionType intersect(Line *l1, Line *l2, double time) {
   assert(compareLines(l1, l2) < 0);
 
-  if (intersectLines(l1->p1, l1->p2, l2->p1, l2->p2)) {
-    return ALREADY_INTERSECTED;
-  }
-
   // Get relative velocity.
-  // Vec velocity = {.x = l2->velocity.x - l1->velocity.x, .y = l2->velocity.y - l1->velocity.y};
   double dx = (l2->velocity.x - l1->velocity.x) * time;
   double dy = (l2->velocity.y - l1->velocity.y) * time;
 
@@ -39,9 +34,32 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
   Vec p1 = {.x = l2->p1.x + dx, .y = l2->p1.y + dy};
   Vec p2 = {.x = l2->p2.x + dx, .y = l2->p2.y + dy};
 
-  bool top_intersected = intersectLines(l1->p1, l1->p2, p1, l2->p1);
-  bool bottom_intersected = intersectLines(l1->p1, l1->p2, p2, l2->p2);
-  int num_line_intersections = top_intersected + bottom_intersected + intersectLines(l1->p1, l1->p2, p1, p2);
+  double d1 = direction(l1->p1, l1->p2, l2->p1);
+  double d2 = direction(l1->p1, l1->p2, l2->p2);
+  double d3 = direction(l1->p1, l1->p2, p1);
+  double d4 = direction(l1->p1, l1->p2, p2);
+
+  if ((d1 * d2 > 0) && (d2 * d3 > 0) && (d3 * d4 > 0)) {
+    return NO_INTERSECTION;
+  }
+
+  double d5 = direction(l2->p1, l2->p2, l1->p1);
+  double d6 = direction(l2->p1, l2->p2, l1->p2); 
+
+  if (intersectLines(l1->p1, l1->p2, l2->p1, l2->p2, d1*d2, d5*d6)) {
+    return ALREADY_INTERSECTED;
+  }
+
+  double d7 = direction(p1, l2->p1, l1->p1);
+  double d8 = direction(p1, l2->p1, l1->p2);
+  double d9 = direction(p2, l2->p2, l1->p1);
+  double d10 = direction(p2, l2->p2, l1->p2); 
+  double d11 = direction(p1, p2, l1->p1);
+  double d12 = direction(p1, p2, l1->p2);
+
+  bool top_intersected = intersectLines(l1->p1, l1->p2, p1, l2->p1, d3*d1, d7*d8);
+  bool bottom_intersected = intersectLines(l1->p1, l1->p2, p2, l2->p2, d4*d2, d9*d10);
+  int num_line_intersections = top_intersected + bottom_intersected + intersectLines(l1->p1, l1->p2, p1, p2, d3*d4, d11*d12);
 
   if (num_line_intersections == 2) {
     return L2_WITH_L1;
@@ -77,32 +95,16 @@ inline bool pointInParallelogram(Vec point, Vec p1, Vec p2, Vec p3, Vec p4) {
 }
 
 // Check if two lines intersect.
-inline bool intersectLines(Vec p1, Vec p2, Vec p3, Vec p4) {
-  // Relative orientation
-  double d1 = direction(p3, p4, p1);
-  double d2 = direction(p3, p4, p2);
-  double d3 = direction(p1, p2, p3);
-  double d4 = direction(p1, p2, p4);
-
+inline bool intersectLines(Vec p1, Vec p2, Vec p3, Vec p4, double d1, double d2) {
   // If (p1, p2) and (p3, p4) straddle each other, the line segments must
   // intersect.
-  if (((d1 > 0 && d2 < 0) || (d1 < 0 && d2 > 0))
-      && ((d3 > 0 && d4 < 0) || (d3 < 0 && d4 > 0))) {
+  if (d1 < 0 && d2 < 0) {
     return true;
   }
-  if (d1 == 0 && onSegment(p3, p4, p1)) {
-    return true;
+  if (d1 * d2 != 0) {
+    return false;
   }
-  if (d2 == 0 && onSegment(p3, p4, p2)) {
-    return true;
-  }
-  if (d3 == 0 && onSegment(p1, p2, p3)) {
-    return true;
-  }
-  if (d4 == 0 && onSegment(p1, p2, p4)) {
-    return true;
-  }
-  return false;
+  return onSegment(p3, p4, p1) || onSegment(p3, p4, p2) || onSegment(p1, p2, p3) || onSegment(p1, p2, p4);
 }
 
 // Obtain the intersection point for two intersecting line segments.
