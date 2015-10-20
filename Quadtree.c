@@ -219,6 +219,97 @@ void test_quadtree_line_array(Quadtree * tree, Line ** lines, int * quadtrees, i
   check_index_equal(tree->quadrant_4->quadrant_3, 19, lines, quadtrees, quadtree_numOfLines);
   check_index_equal(tree->quadrant_4->quadrant_4, 20, lines, quadtrees, quadtree_numOfLines);
 
+  // check parent calcs and presense of parents (if applicable)
+  int child_index = 1;
+  assert(((child_index - 1) / 4) == 0);
+  assert(quadtrees[((child_index - 1) / 4)] == 0);
+  
+  child_index = 4;
+  assert(((child_index - 1) / 4) == 0);
+  assert(quadtrees[((child_index - 1) / 4)] == 0);
+  
+  child_index = 5;
+  assert(((child_index - 1) / 4) == 1);
+  assert(quadtrees[((child_index - 1) / 4)]);
+
+  child_index = 8;
+  assert(((child_index - 1) / 4) == 1);
+  assert(quadtrees[((child_index - 1) / 4)]);
+
+  child_index = 9;
+  assert(((child_index - 1) / 4) == 2);
+  assert(quadtrees[((child_index - 1) / 4)]);
+
+  child_index = 17;
+  assert(((child_index - 1) / 4) == 4);
+  assert(quadtrees[((child_index - 1) / 4)]);
+
+  child_index = 20;
+  assert(((child_index - 1) / 4) == 4);
+  assert(quadtrees[((child_index - 1) / 4)]);
+
+  // check child calcs, and presense of children (if applicable)
+  int parent_index = 0;
+  assert(4*parent_index+1 == 1);
+  assert(quadtrees[4*parent_index+1]);
+  
+  assert(4*parent_index+2 == 2);
+  assert(quadtrees[4*parent_index+2]);
+  
+  assert(4*parent_index+3 == 3);
+  assert(quadtrees[4*parent_index+3]);
+  
+  assert(4*parent_index+4 == 4);
+  assert(quadtrees[4*parent_index+4]);
+
+
+  parent_index = 1;
+  assert(4*parent_index+1 == 5);
+  assert(quadtrees[4*parent_index+1]);
+  
+  assert(4*parent_index+2 == 6);
+  assert(quadtrees[4*parent_index+2]);
+  
+  assert(4*parent_index+3 == 7);
+  assert(quadtrees[4*parent_index+3]);
+  
+  assert(4*parent_index+4 == 8);
+  assert(quadtrees[4*parent_index+4]);
+
+
+  parent_index = 4;
+  assert(4*parent_index+1 == 17);
+  assert(quadtrees[4*parent_index+1]);
+  
+  assert(4*parent_index+2 == 18);
+  assert(quadtrees[4*parent_index+2]);
+  
+  assert(4*parent_index+3 == 19);
+  assert(quadtrees[4*parent_index+3]);
+  
+  assert(4*parent_index+4 == 20);
+  assert(quadtrees[4*parent_index+4]);
+
+  // check the number of lines is correct
+  int tree_index = 0;
+  int line_index = quadtrees[tree_index] + quadtree_numOfLines[tree_index];
+  assert(lines[line_index-1] == tree->lines[tree->numOfLines-1]);
+
+  tree_index = 1;
+  line_index = quadtrees[tree_index] + quadtree_numOfLines[tree_index];
+  if(tree->quadrant_1->numOfLines > 0)
+    assert(lines[line_index-1] == tree->quadrant_1->lines[tree->quadrant_1->numOfLines-1]);
+
+  tree_index = 2;
+  line_index = quadtrees[tree_index] + quadtree_numOfLines[tree_index];
+  if(tree->quadrant_2->numOfLines > 0)
+    assert(lines[line_index-1] == tree->quadrant_2->lines[tree->quadrant_2->numOfLines-1]);
+
+  tree_index = 5;
+  line_index = quadtrees[tree_index] + quadtree_numOfLines[tree_index];
+  if(tree->quadrant_1->quadrant_1->numOfLines > 0)
+    assert(lines[line_index-1] == tree->quadrant_1->quadrant_1->lines[tree->quadrant_1->quadrant_1->numOfLines-1]);
+
   // Quadtree * current = tree;
   // int index = 0;
   // while (has_next) {
@@ -268,8 +359,9 @@ void Quadtree_to_Line_array(Quadtree * tree, Line ** lines, int * quadtrees, int
     }
   }
   free(myq);
-
+#ifdef DEBUG
   test_quadtree_line_array(tree, lines, quadtrees, quadtree_numOfLines);
+#endif
 }
 
 void detect_collisions(Quadtree * tree, int numOfLines, IntersectionEventList_reducer * X) {
@@ -285,7 +377,7 @@ void detect_collisions(Quadtree * tree, int numOfLines, IntersectionEventList_re
   // i.e. lines[quadtrees[i]] = 1st line in the ith quadtree
   int * quadtrees = calloc(numOfLines, sizeof(int));
   // quadtree_numOfLines[i] is the number of lines in the quadtree at quadtrees[i]
-  int * quadtree_numOfLines = calloc(numOfLines, sizeof(int*));
+  int * quadtree_numOfLines = calloc(numOfLines, sizeof(int));
 
   assert(lines);
   assert(quadtrees);
