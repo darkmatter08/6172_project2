@@ -184,6 +184,48 @@ void delete_Quadtree(Quadtree * tree) {
   free(tree);
 }
 
+void check_index_equal(Quadtree * tree, int tree_index, Line ** lines, int * quadtrees, int* quadtree_numOfLines) {
+  assert(tree->numOfLines == quadtree_numOfLines[tree_index]);
+  for (int i = 0; i < tree->numOfLines; i++) {
+    assert(tree->lines[i] == lines[quadtrees[tree_index] + i]);
+  }
+}
+
+void test_quadtree_line_array(Quadtree * tree, Line ** lines, int * quadtrees, int* quadtree_numOfLines) {
+  check_index_equal(tree, 0, lines, quadtrees, quadtree_numOfLines);
+
+  check_index_equal(tree->quadrant_1, 1, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_2, 2, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_3, 3, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_4, 4, lines, quadtrees, quadtree_numOfLines);
+  
+  check_index_equal(tree->quadrant_1->quadrant_1, 5, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_1->quadrant_2, 6, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_1->quadrant_3, 7, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_1->quadrant_4, 8, lines, quadtrees, quadtree_numOfLines);
+
+  check_index_equal(tree->quadrant_2->quadrant_1, 9, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_2->quadrant_2, 10, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_2->quadrant_3, 11, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_2->quadrant_4, 12, lines, quadtrees, quadtree_numOfLines);
+
+  check_index_equal(tree->quadrant_3->quadrant_1, 13, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_3->quadrant_2, 14, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_3->quadrant_3, 15, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_3->quadrant_4, 16, lines, quadtrees, quadtree_numOfLines);
+
+  check_index_equal(tree->quadrant_4->quadrant_1, 17, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_4->quadrant_2, 18, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_4->quadrant_3, 19, lines, quadtrees, quadtree_numOfLines);
+  check_index_equal(tree->quadrant_4->quadrant_4, 20, lines, quadtrees, quadtree_numOfLines);
+
+  // Quadtree * current = tree;
+  // int index = 0;
+  // while (has_next) {
+  //    assert(current->numOfLines == quadtree_numOfLines[index]);
+  // }
+}
+
 // Change return type to a struct that is a struct with Line** and pointers to the start of quadtrees (Line **)
 void Quadtree_to_Line_array(Quadtree * tree, Line ** lines, int * quadtrees, int* quadtree_numOfLines) {
   assert(tree);
@@ -226,6 +268,8 @@ void Quadtree_to_Line_array(Quadtree * tree, Line ** lines, int * quadtrees, int
     }
   }
   free(myq);
+
+  test_quadtree_line_array(tree, lines, quadtrees, quadtree_numOfLines);
 }
 
 void detect_collisions(Quadtree * tree, int numOfLines, IntersectionEventList_reducer * X) {
