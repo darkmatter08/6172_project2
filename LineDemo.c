@@ -86,6 +86,8 @@ void LineDemo_createLines(LineDemo* lineDemo) {
     lineId++;
 
     line->relative_vector = Vec_makeFromLine(*line);
+    line->top_left = (Vec) {.x = MIN(line->p1.x, line->p2.x), .y = MIN(line->p1.y, line->p2.y)};
+    line->bottom_right = (Vec) {.x = MAX(line->p1.x, line->p2.x), .y = MAX(line->p1.y, line->p2.y)};
 
     // transfer ownership of line to collisionWorld
     CollisionWorld_addLine(lineDemo->collisionWorld, line);

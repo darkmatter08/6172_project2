@@ -62,6 +62,8 @@ struct Line {
   unsigned int id;  // Unique line ID.
 
   Vec relative_vector;  // length vector
+  Vec top_left;
+  Vec bottom_right;
 };
 typedef struct Line Line;
 

@@ -92,6 +92,10 @@ void CollisionWorld_updatePosition(CollisionWorld* collisionWorld) {
     line->p1.y += dy;
     line->p2.x += dx;
     line->p2.y += dy;
+    line->top_left.x += dx;
+    line->top_left.y += dy;
+    line->bottom_right.x += dx;
+    line->bottom_right.y += dy;
   }
 }
 

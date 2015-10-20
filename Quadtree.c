@@ -138,23 +138,15 @@ void reassign_current_to_quadrants(Quadtree * tree) {
 inline bool can_fit(Line * line, Quadtree * tree) {
   return  
     // check line at beginning of time step
-    line->p1.x >= tree->p1.x &&
-    line->p1.x < tree->p2.x &&
-    line->p2.x >= tree->p1.x &&
-    line->p2.x < tree->p2.x &&
-    line->p1.y >= tree->p1.y &&
-    line->p1.y < tree->p2.y &&
-    line->p2.y >= tree->p1.y &&
-    line->p2.y < tree->p2.y &&
+    line->top_left.x >= tree->p1.x &&
+    line->bottom_right.x < tree->p2.x &&
+    line->top_left.y >= tree->p1.y &&
+    line->bottom_right.y < tree->p2.y &&
     // check line at end of time step
-    line->p1.x + line->velocity.x >= tree->p1.x &&
-    line->p1.x + line->velocity.x < tree->p2.x &&
-    line->p2.x + line->velocity.x >= tree->p1.x &&
-    line->p2.x + line->velocity.x < tree->p2.x &&
-    line->p1.y + line->velocity.y >= tree->p1.y &&
-    line->p1.y + line->velocity.y < tree->p2.y &&
-    line->p2.y + line->velocity.y >= tree->p1.y &&
-    line->p2.y + line->velocity.y < tree->p2.y;
+    line->top_left.x + line->velocity.x >= tree->p1.x &&
+    line->bottom_right.x + line->velocity.x < tree->p2.x &&
+    line->top_left.y + line->velocity.y >= tree->p1.y &&
+    line->bottom_right.y + line->velocity.y < tree->p2.y;
 }
 
 // Recursively deletes all Quadtrees in this subtree
