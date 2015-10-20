@@ -42,7 +42,7 @@ typedef enum {
 IntersectionType intersect(Line *l1, Line *l2, double time);
 
 // Check if a point is in the parallelogram.
-bool pointInParallelogram(Vec point, Vec p1, Vec p2, Vec p3, Vec p4, double d1, double d2, double d3, double d4);
+bool pointInParallelogram(double d1, double d2);
 
 // Check if two lines intersect.
 bool intersectLines(Vec p1, Vec p2, Vec p3, Vec p4, double d1, double d2);
