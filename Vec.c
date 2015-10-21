@@ -21,9 +21,6 @@
  **/
 
 #include "./Vec.h"
-
-#include <math.h>
-
 #include "./Line.h"
 
 Vec Vec_make(const vec_dimension x, const vec_dimension y) {

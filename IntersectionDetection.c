@@ -23,12 +23,12 @@
 #include "./IntersectionDetection.h"
 
 // Detect if lines l1 and l2 will intersect between now and the next time step.
-IntersectionType intersect(Line *l1, Line *l2, double time) {
+IntersectionType intersect(Line *l1, Line *l2) {
   assert(compareLines(l1, l2) < 0);
 
   // Get relative velocity.
-  double dx = (l2->velocity.x - l1->velocity.x) * time;
-  double dy = (l2->velocity.y - l1->velocity.y) * time;
+  double dx = (l2->velocity.x - l1->velocity.x) * 0.5;
+  double dy = (l2->velocity.y - l1->velocity.y) * 0.5;
 
   // Get the parallelogram.
   Vec p1 = {.x = l2->p1.x + dx, .y = l2->p1.y + dy};
@@ -44,7 +44,7 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
   }
 
   double d5 = direction(l2->p1, l2->p2, l1->p1);
-  double d6 = direction(l2->p1, l2->p2, l1->p2); 
+  double d6 = direction(l2->p1, l2->p2, l1->p2);
 
   if (intersectLines(d1*d2, d5*d6)) {
     return ALREADY_INTERSECTED;
@@ -53,7 +53,7 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
   double d7 = direction(p1, l2->p1, l1->p1);
   double d8 = direction(p1, l2->p1, l1->p2);
   double d9 = direction(p2, l2->p2, l1->p1);
-  double d10 = direction(p2, l2->p2, l1->p2); 
+  double d10 = direction(p2, l2->p2, l1->p2);
   double d11 = direction(p1, p2, l1->p1);
   double d12 = direction(p1, p2, l1->p2);
 
@@ -67,7 +67,7 @@ IntersectionType intersect(Line *l1, Line *l2, double time) {
 
   if (pointInParallelogram(d5*d11, d7*d9)
       && pointInParallelogram(d6*d12, d8*d10)) {
-    return L1_WITH_L2; // What's the difference wtih :67?
+    return L1_WITH_L2;
   }
 
   if (num_line_intersections == 0) {

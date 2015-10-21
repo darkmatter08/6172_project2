@@ -61,9 +61,9 @@ struct Line {
 
   unsigned int id;  // Unique line ID.
 
-  Vec relative_vector;  // length vector
-  Vec top_left;
-  Vec bottom_right;
+  Vec relative_vector;  // Vector that the line represents
+  Vec top_left;         // Vector representing top left corner of line bounding box
+  Vec bottom_right;     // Vector representing bottom right corner of line bounding box
 };
 typedef struct Line Line;
 

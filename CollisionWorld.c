@@ -21,14 +21,13 @@
  * SOFTWARE. 
  **/
 
-#include "./CollisionWorld.h"
-
 #include <cilk/cilk_api.h>
 #include <stdlib.h>
 #include <math.h>
 #include <assert.h>
 #include <stdio.h>
 
+#include "./CollisionWorld.h"
 #include "./IntersectionDetection.h"
 #include "./IntersectionEventList.h"
 #include "./Line.h"
@@ -136,14 +135,15 @@ void CollisionWorld_lineWallCollision(CollisionWorld* collisionWorld) {
 }
 
 void CollisionWorld_detectIntersection(CollisionWorld* collisionWorld) {
-  // IntersectionEventList intersectionEventList = IntersectionEventList_make();
-
-  IntersectionEventList_reducer X = CILK_C_INIT_REDUCER(
-    /* type */ IntersectionEventList, IntersectionEventList_reduce, 
-    IntersectionEventList_identity, IntersectionEventList_destroy,
-    /* initial value */ IntersectionEventList_make()
+  IntersectionEventList_reducer reducer = CILK_C_INIT_REDUCER(
+    IntersectionEventList,
+    IntersectionEventList_reduce,
+    IntersectionEventList_identity,
+    IntersectionEventList_destroy,
+    IntersectionEventList_make()
   );
 
+  // create the quadtree array
   int numQuadtrees = 0;
   int * pnumQuadtrees = &numQuadtrees;
   int size = 0;
@@ -152,17 +152,19 @@ void CollisionWorld_detectIntersection(CollisionWorld* collisionWorld) {
   }
   Quadtree ** quadtrees = malloc(sizeof(Quadtree *) * size);
 
-  CILK_C_REGISTER_REDUCER(X);
+  CILK_C_REGISTER_REDUCER(reducer);
 
-  // Replace as part of basic QuadTree
+  // insert lines into the quadtree
   Quadtree * tree = parse_CollisionWorld_to_Quadtree(collisionWorld, quadtrees, pnumQuadtrees);
-  detect_collisions(tree, &X, quadtrees, pnumQuadtrees);
+
+  // calculate the number of collisions
+  detect_collisions(&reducer, quadtrees, pnumQuadtrees);
+
+  // clean up the quadtree
   delete_Quadtree(tree);
 
-  IntersectionEventList intersectionEventList = X.value;
-
-  CILK_C_UNREGISTER_REDUCER(X);
-
+  IntersectionEventList intersectionEventList = reducer.value;
+  CILK_C_UNREGISTER_REDUCER(reducer);
   collisionWorld->numLineLineCollisions += intersectionEventList.size;
 
   // Sort the intersection event list.
@@ -244,10 +246,10 @@ void CollisionWorld_collisionSolver(CollisionWorld* collisionWorld,
   Vec face;
   Vec normal;
   if (intersectionType == L1_WITH_L2) {
-    Vec v = l2->relative_vector;//Vec_makeFromLine(*l2);
+    Vec v = l2->relative_vector;
     face = Vec_normalize(v);
   } else {
-    Vec v = l1->relative_vector;//Vec_makeFromLine(*l1);
+    Vec v = l1->relative_vector;
     face = Vec_normalize(v);
   }
   normal = Vec_orthogonal(face);

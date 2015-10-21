@@ -25,6 +25,7 @@
 #define VEC_H_
 
 #include <stdbool.h>
+#include <math.h>
 
 typedef double vec_dimension;
 

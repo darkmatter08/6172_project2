@@ -21,13 +21,12 @@
  * SOFTWARE.
  **/
 
-#include "./LineDemo.h"
-
 #include <time.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
 
+#include "./LineDemo.h"
 #include "./GraphicStuff.h"
 #include "./Line.h"
 
@@ -91,6 +90,7 @@ void LineDemo_createLines(LineDemo* lineDemo) {
     line->id = lineId;
     lineId++;
 
+    // precompute some information about the line
     line->relative_vector = Vec_makeFromLine(*line);
     line->top_left = (Vec) {.x = MIN(line->p1.x, line->p2.x), .y = MIN(line->p1.y, line->p2.y)};
     line->bottom_right = (Vec) {.x = MAX(line->p1.x, line->p2.x), .y = MAX(line->p1.y, line->p2.y)};
