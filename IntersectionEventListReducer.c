@@ -23,19 +23,29 @@
 #include "./IntersectionEventListReducer.h"
 
 // Evaluates *left = *left OPERATOR *right.
+// Cilk requires key, left, and right to be void * pointers
+// We know left and right to be only IntersectionEventList * pointers
 void IntersectionEventList_reduce(void* key, void* left, void* right) {
+  assert(left);
+  assert(right);
+
   IntersectionEventList * list1 = (IntersectionEventList *) left;
   IntersectionEventList * list2 = (IntersectionEventList *) right;
+  
+  // if list1 is empty, merge list2 into list1
   if (!(list1->head)) {
     list1->head = list2->head;
     list1->tail = list2->tail;
     list1->size = list2->size;
-  } else if (list2->head) {
+  } else if (list2->head) { // if list2 is not empty
     list1->tail->next = list2->head;
     list1->tail = list2->tail;
     list1->size += list2->size;
   }
 
+  // if list2 is empty, do nothing
+
+  // reset list2 to be empty
   list2->head = list2->tail = NULL;
   list2->size = 0;
 }
@@ -47,5 +57,7 @@ void IntersectionEventList_identity(void* key, void* value) {
 
 // Destroys any dynamically allocated memory.
 void IntersectionEventList_destroy(void* key, void* value) {
+  assert(value);
+
   IntersectionEventList_deleteNodes((IntersectionEventList *) value);
 }
