@@ -84,6 +84,50 @@ A reducer for the InteresectionEventList was implemented (see `IntersectionEvent
 
 The reducer was registered/unregistered in `CollisionWorld.c:CollisionWorld_detectIntersection()` and passed into the `detect_collisions()` method. This method used `REDUCER_VIEW()` in order to gain access to the underlying IntersectionEventList, and passed the reducer into the `detect_collisions_recursive()` method.
 
+Running the code through Cilkscreen resulted in no errors in our current implementation. However, running it against past implementation causes Cilkscreen to complain about race conditions, which we examined and determined to be benign.
+
+###Write-up 10
+The work of the program was 35,733,518,506 instructions.
+The span of the program was 973,084,829 instructions.
+The parallelism of the program before tuning was 28.35.
+The maximum amount of parallelism that we achieved was 36.72.
+
+We tried varying the maximum depth, the maximum number of nodes per quadrant, and the grainsize pragma for each of our cilk_for loops. In the end, only varying the max depth and the max number of nodes per quadrant resulted in a speedup.
+
+###Write-up 11
+We noticed that in the intersect function, many of the same calculations are repeated for a given line. We decided to cache the results of these calculations in the Line struct, which cut down on the number of instructions needed but resulted in a larger object size. Since the intersect function was relatively expensive, we implemented a coarser check for the no intersection case that would short circuit it. We checked if the ray from p1 to p2 of the Line struct could intersect the parallelogram. If it could, we proceeded with the more expensive, but otherwise, we would return no intersection. We initially implemented a bounding box check as the coarser check but found this method to be slightly faster.
+
+Additionally, we found that replacing some of the Vec operations in intersect with their inlined counterparts resulted in a fairly significant speedup. Although it made the code slightly less readable, we felt that the performance improvement justified this decision.
+
+After inspecting the intersectLines function, we discovered that many of the same calculations were being repeated in other intersectLines calls so we precomputed those values and just passed them to different intersectLines calls. This also made the code less readable but slightly faster.
+
+Inlining proved to be a valuable way to improve performance, especially when we applied it to the intersectLines function. Unfortunately, this results in slightly harder to decipher gprof output since intersectLines would be treated as part of intersect.
+
+We also initially started with a recursive implementation to determine which pairs of lines to check for intersections, but eventually moved to an iterative approach that saw a 10% speedup. This is likely because the iterative implementation does not need to spend time pushing the stack frame for additional function calls.
+
+Although, it was suggested that we find a method of updating the quadtree instead of creating it and destroying it on every frame, after examining the gprof output from our original implementation, we determined that the cost of creating and destroying the quadtree was minimal at best. We felt it would be better to focus on other areas of the code such as the intersect function.
+
+Near the deadline, we attempted to implement the quadtree data structure as an array of lines (similarly to how a binary tree can be implemented as an array). Although we did manage to achieve correctness, there was no significant speedup as far as we could so we decided to abandon this in favor of our quadtree implementation.
+
+###Breakdown of Contributions
+
+##Shawn
+* implemented creating the quadtree, inserting lines into the quadtree, deleting the quadtree
+* implemented testing for initial quadtree implementation
+* implemented IntersectionEventListReducer
+* implemented coarse bounding box check
+* implemented quadtree as an array
+
+##David
+* implemented initial recursive collision detection in the quadtree
+* investigated inline functions and precomputed line calculations
+* ported serial collision detection function to parallelized version
+* implemented better coarse check for intersect function
+* implemented iterative collision detection in the quadtree
+
+###MITPOSSE Meeting Comments
+Our MITPOSSE mentors pointed out various location in our code where the quality could be better, for example, generic variable names and confusing control flow. They also generally encouraged us to make liberal use of asserts to check that our code is working as expected and commments to document our code. Although at first they questioned why there were so few commits in our gitlog.txt, we explained that we used development branches to test out new features so that master would always remain in a stable state. They also praised our use of quick tests to check that our quadtree implementation was working as expected.
+
 ###Appendix
 Full gprof output after parallelization
 ```
