@@ -111,14 +111,14 @@ Near the deadline, we attempted to implement the quadtree data structure as an a
 
 ###Breakdown of Contributions
 
-##Shawn
+####Shawn
 * implemented creating the quadtree, inserting lines into the quadtree, deleting the quadtree
 * implemented testing for initial quadtree implementation
 * implemented IntersectionEventListReducer
 * implemented coarse bounding box check
 * implemented quadtree as an array
 
-##David
+####David
 * implemented initial recursive collision detection in the quadtree
 * investigated inline functions and precomputed line calculations
 * ported serial collision detection function to parallelized version
